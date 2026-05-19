@@ -359,22 +359,22 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
       <div style="font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:6px;">子どもごとの月額（0=使わない）</div>
       <div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px 6px;align-items:center;">
         <div id="schol-row-s" style="display:contents;">
-          <span style="color:#3b82f6;font-size:.73rem;font-weight:700;" id="schol-name-s">柊仁</span>
+          <span style="color:#3b82f6;font-size:.73rem;font-weight:700;" id="schol-name-s">長男</span>
           <input type="number" id="sSchol" value="3" min="0" max="12" step="1" oninput="recalc()" style="border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;font-size:.85rem;font-weight:700;color:var(--navy);text-align:right;width:100%;-moz-appearance:textfield;">
           <span style="font-size:.65rem;color:var(--muted);">万/月</span>
         </div>
         <div id="schol-row-k" style="display:contents;">
-          <span style="color:#8b5cf6;font-size:.73rem;font-weight:700;" id="schol-name-k">海橙</span>
+          <span style="color:#8b5cf6;font-size:.73rem;font-weight:700;" id="schol-name-k">次男</span>
           <input type="number" id="kSchol" value="3" min="0" max="12" step="1" oninput="recalc()" style="border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;font-size:.85rem;font-weight:700;color:var(--navy);text-align:right;width:100%;-moz-appearance:textfield;">
           <span style="font-size:.65rem;color:var(--muted);">万/月</span>
         </div>
         <div id="schol-row-a" style="display:contents;">
-          <span style="color:#10b981;font-size:.73rem;font-weight:700;" id="schol-name-a">碧杜</span>
+          <span style="color:#10b981;font-size:.73rem;font-weight:700;" id="schol-name-a">三男</span>
           <input type="number" id="aSchol" value="3" min="0" max="12" step="1" oninput="recalc()" style="border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;font-size:.85rem;font-weight:700;color:var(--navy);text-align:right;width:100%;-moz-appearance:textfield;">
           <span style="font-size:.65rem;color:var(--muted);">万/月</span>
         </div>
         <div id="schol-row-b" style="display:contents;">
-          <span style="color:#f59e0b;font-size:.73rem;font-weight:700;" id="schol-name-b">葵乙</span>
+          <span style="color:#f59e0b;font-size:.73rem;font-weight:700;" id="schol-name-b">長女</span>
           <input type="number" id="bSchol" value="0" min="0" max="12" step="1" oninput="recalc()" style="border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;font-size:.85rem;font-weight:700;color:var(--navy);text-align:right;width:100%;-moz-appearance:textfield;">
           <span style="font-size:.65rem;color:var(--muted);">万/月</span>
         </div>
@@ -412,7 +412,7 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
         <div class="sb-label" style="margin-bottom:6px;">運用に回す子どもを選択</div>
         <div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px 8px;align-items:center;font-size:.75rem;">
           <div id="invest-row-s" style="display:contents;">
-            <span style="color:#3b82f6;font-weight:700;" id="invest-name-s">柊仁</span>
+            <span style="color:#3b82f6;font-weight:700;" id="invest-name-s">長男</span>
             <span style="color:var(--muted);font-size:.68rem;" id="invest-hint-s">─</span>
             <label class="toggle" style="transform:scale(0.85);transform-origin:right;">
               <input type="checkbox" id="sInvest" onchange="recalc()">
@@ -420,7 +420,7 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
             </label>
           </div>
           <div id="invest-row-k" style="display:contents;">
-            <span style="color:#8b5cf6;font-weight:700;" id="invest-name-k">海橙</span>
+            <span style="color:#8b5cf6;font-weight:700;" id="invest-name-k">次男</span>
             <span style="color:var(--muted);font-size:.68rem;" id="invest-hint-k">─</span>
             <label class="toggle" style="transform:scale(0.85);transform-origin:right;">
               <input type="checkbox" id="kInvest" onchange="recalc()">
@@ -428,7 +428,7 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
             </label>
           </div>
           <div id="invest-row-a" style="display:contents;">
-            <span style="color:#10b981;font-weight:700;" id="invest-name-a">碧杜</span>
+            <span style="color:#10b981;font-weight:700;" id="invest-name-a">三男</span>
             <span style="color:var(--muted);font-size:.68rem;" id="invest-hint-a">─</span>
             <label class="toggle" style="transform:scale(0.85);transform-origin:right;">
               <input type="checkbox" id="aInvest" onchange="recalc()">
@@ -436,7 +436,7 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
             </label>
           </div>
           <div id="invest-row-b" style="display:contents;">
-            <span style="color:#f59e0b;font-weight:700;" id="invest-name-b">葵乙</span>
+            <span style="color:#f59e0b;font-weight:700;" id="invest-name-b">長女</span>
             <span style="color:var(--muted);font-size:.68rem;" id="invest-hint-b">─</span>
             <label class="toggle" style="transform:scale(0.85);transform-origin:right;">
               <input type="checkbox" id="bInvest" onchange="recalc()">
@@ -468,10 +468,10 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
       <div class="sb-field" style="margin-top:10px;">
         <div class="sb-label">対象の子ども</div>
         <select class="sb-select" id="fundTarget" onchange="recalc()">
-          <option value="s">柊仁（しゅうと）</option>
-          <option value="k">海橙（かいと）</option>
-          <option value="a">碧杜（あおと）</option>
-          <option value="b" selected>葵乙（りと）</option>
+          <option value="s">長男（ちょうなん）</option>
+          <option value="k">次男（じなん）</option>
+          <option value="a">三男（さんなん）</option>
+          <option value="b" selected>長女（ちょうじょ）</option>
         </select>
       </div>
       <!-- 運用開始年 -->
@@ -545,19 +545,19 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
     <div style="margin-top:10px;">
       <div style="font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:6px;">🎓 大学進路</div>
       <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 8px;align-items:center;font-size:.75rem;">
-        <span style="color:#3b82f6;font-weight:700;">柊仁</span>
+        <span style="color:#3b82f6;font-weight:700;">長男</span>
         <select class="sb-select" id="sType" onchange="recalc()" style="padding:4px 6px;">
           <option value="private">私立</option><option value="public">国公立</option>
         </select>
-        <span style="color:#8b5cf6;font-weight:700;">海橙</span>
+        <span style="color:#8b5cf6;font-weight:700;">次男</span>
         <select class="sb-select" id="kType" onchange="recalc()" style="padding:4px 6px;">
           <option value="private">私立</option><option value="public">国公立</option>
         </select>
-        <span style="color:#10b981;font-weight:700;">碧杜</span>
+        <span style="color:#10b981;font-weight:700;">三男</span>
         <select class="sb-select" id="aType" onchange="recalc()" style="padding:4px 6px;">
           <option value="private">私立</option><option value="public">国公立</option>
         </select>
-        <span style="color:#f59e0b;font-weight:700;">葵乙</span>
+        <span style="color:#f59e0b;font-weight:700;">長女</span>
         <select class="sb-select" id="bType" onchange="recalc()" style="padding:4px 6px;">
           <option value="private">私立</option><option value="public">国公立</option>
         </select>
@@ -579,7 +579,7 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
       <div style="font-size:.63rem;color:#64748b;margin-bottom:5px;font-weight:600;">学校 ／ 塾・予備校</div>
       <div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px 6px;align-items:center;font-size:.75rem;">
         <div id="hs-row-s" style="display:contents;">
-          <span style="color:#3b82f6;font-weight:700;" id="hs-name-s">柊仁</span>
+          <span style="color:#3b82f6;font-weight:700;" id="hs-name-s">長男</span>
           <select class="sb-select" id="sHsType" onchange="recalc()" style="padding:4px 5px;font-size:.72rem;">
             <option value="public">公立</option>
             <option value="private">私立</option>
@@ -591,7 +591,7 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
           </label>
         </div>
         <div id="hs-row-k" style="display:contents;">
-          <span style="color:#8b5cf6;font-weight:700;" id="hs-name-k">海橙</span>
+          <span style="color:#8b5cf6;font-weight:700;" id="hs-name-k">次男</span>
           <select class="sb-select" id="kHsType" onchange="recalc()" style="padding:4px 5px;font-size:.72rem;">
             <option value="public">公立</option>
             <option value="private">私立</option>
@@ -603,7 +603,7 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
           </label>
         </div>
         <div id="hs-row-a" style="display:contents;">
-          <span style="color:#10b981;font-weight:700;" id="hs-name-a">碧杜</span>
+          <span style="color:#10b981;font-weight:700;" id="hs-name-a">三男</span>
           <select class="sb-select" id="aHsType" onchange="recalc()" style="padding:4px 5px;font-size:.72rem;">
             <option value="public">公立</option>
             <option value="private">私立</option>
@@ -615,7 +615,7 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
           </label>
         </div>
         <div id="hs-row-b" style="display:contents;">
-          <span style="color:#f59e0b;font-weight:700;" id="hs-name-b">葵乙</span>
+          <span style="color:#f59e0b;font-weight:700;" id="hs-name-b">長女</span>
           <select class="sb-select" id="bHsType" onchange="recalc()" style="padding:4px 5px;font-size:.72rem;">
             <option value="public">公立</option>
             <option value="private">私立</option>
@@ -650,10 +650,10 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
       <div class="sb-field" style="margin-top:10px;">
         <div class="sb-label">充当先の子ども</div>
         <select class="sb-select" id="withdrawTarget" onchange="recalc()">
-          <option value="s">柊仁（しゅうと）</option>
-          <option value="k">海橙（かいと）</option>
-          <option value="a">碧杜（あおと）</option>
-          <option value="b">葵乙（りと）</option>
+          <option value="s">長男（ちょうなん）</option>
+          <option value="k">次男（じなん）</option>
+          <option value="a">三男（さんなん）</option>
+          <option value="b">長女（ちょうじょ）</option>
         </select>
       </div>
       <!-- 取り崩し年 -->
@@ -717,11 +717,11 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
   <div style="font-size:.82rem;font-weight:800;color:var(--muted);margin-bottom:10px;letter-spacing:.05em;">📚 教育資金 — 子ども別の見通し</div>
   <div class="edu-grid">
 
-    <!-- しゅうと -->
+    <!-- 長男 -->
     <div class="edu-card" id="card-s">
       <div class="ec-head">
         <div>
-          <div class="ec-name" style="color:#3b82f6;" id="name-s">柊仁（しゅうと）</div>
+          <div class="ec-name" style="color:#3b82f6;" id="name-s">長男（ちょうなん）</div>
           <div class="ec-year" id="year-s">2028年入学</div>
         </div>
         <div class="ec-badge ok" id="badge-s">─</div>
@@ -740,11 +740,11 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
       <div class="ec-chips" id="chips-s"></div>
     </div>
 
-    <!-- かいと -->
+    <!-- 次男 -->
     <div class="edu-card" id="card-k">
       <div class="ec-head">
         <div>
-          <div class="ec-name" style="color:#8b5cf6;" id="name-k">海橙（かいと）</div>
+          <div class="ec-name" style="color:#8b5cf6;" id="name-k">次男（じなん）</div>
           <div class="ec-year" id="year-k">2030年入学</div>
         </div>
         <div class="ec-badge ok" id="badge-k">─</div>
@@ -763,11 +763,11 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
       <div class="ec-chips" id="chips-k"></div>
     </div>
 
-    <!-- あおと -->
+    <!-- 三男 -->
     <div class="edu-card" id="card-a">
       <div class="ec-head">
         <div>
-          <div class="ec-name" style="color:#10b981;" id="name-a">碧杜（あおと）</div>
+          <div class="ec-name" style="color:#10b981;" id="name-a">三男（さんなん）</div>
           <div class="ec-year" id="year-a">2031年入学</div>
         </div>
         <div class="ec-badge ok" id="badge-a">─</div>
@@ -786,11 +786,11 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
       <div class="ec-chips" id="chips-a"></div>
     </div>
 
-    <!-- りと -->
+    <!-- 長女 -->
     <div class="edu-card" id="card-b">
       <div class="ec-head">
         <div>
-          <div class="ec-name" style="color:#f59e0b;" id="name-b">葵乙（りと）</div>
+          <div class="ec-name" style="color:#f59e0b;" id="name-b">長女（ちょうじょ）</div>
           <div class="ec-year" id="year-b">2042年入学</div>
         </div>
         <div class="ec-badge ok" id="badge-b">─</div>
@@ -913,21 +913,21 @@ const CHILD_IDS    = ['s','k','a','b'];
 
 let CONFIG = {
   baseYear: new Date().getFullYear(),
-  retireCurrent: 320,
+  retireCurrent: 0,
   numChildren: 4,
   children: [
-    { name:'柊仁', yomi:'しゅうと', current:50,
-      insurance:300, insYear:2027, sbi:0,   sbiYear:0,
-      univYear:2028, subsidyYears:4 },
-    { name:'海橙', yomi:'かいと',  current:50,
-      insurance:0,   insYear:0,    sbi:200, sbiYear:2029,
-      univYear:2030, subsidyYears:4 },
-    { name:'碧杜', yomi:'あおと',  current:50,
-      insurance:100, insYear:2030, sbi:0,   sbiYear:0,
-      univYear:2031, subsidyYears:3 },
-    { name:'葵乙', yomi:'りと',    current:0,
-      insurance:0,   insYear:0,    sbi:0,   sbiYear:0,
-      univYear:2042, subsidyYears:0 },
+    { name:'長男', yomi:'ちょうなん', current:0,
+      insurance:0, insYear:0, sbi:0, sbiYear:0,
+      univYear: new Date().getFullYear() + 4, subsidyYears:0 },
+    { name:'次男', yomi:'じなん',     current:0,
+      insurance:0, insYear:0, sbi:0, sbiYear:0,
+      univYear: new Date().getFullYear() + 7, subsidyYears:0 },
+    { name:'三男', yomi:'さんなん',   current:0,
+      insurance:0, insYear:0, sbi:0, sbiYear:0,
+      univYear: new Date().getFullYear() + 9, subsidyYears:0 },
+    { name:'長女', yomi:'ちょうじょ', current:0,
+      insurance:0, insYear:0, sbi:0, sbiYear:0,
+      univYear: new Date().getFullYear() + 14, subsidyYears:0 },
   ]
 };
 
@@ -1158,13 +1158,13 @@ function calcEduFund() {
 }
 
 // 兄→弟へのカスケード計算（全子一括）
-// fund が渡された場合: 最初の子(しゅうと)の余剰からfund.initialを控除してから次弟へ回す
+// fund が渡された場合: 最初の子の余剰からfund.initialを控除してから次の子へ回す
 function calcAllCascaded(eduPerChild, fund=null){
   let sibSurplus=0, sibSurplusYear=0;
   return CHILDREN.map((ch, idx)=>{
     const r = calcChild(ch, eduPerChild, sibSurplus, sibSurplusYear);
     let nextSurplus = r.surplusForNext;
-    // 専用ファンド初期費用: 最初の子(しゅうと)の余剰から差し引く
+    // 専用ファンド初期費用: 最初の子の余剰から差し引く
     if(fund && idx === 0 && fund.initial > 0){
       const deduct = Math.min(fund.initial, Math.max(0, r.surplusForNext));
       r.fundDeduct = deduct;                    // 控除額を記録（チップ表示用）
@@ -1207,7 +1207,7 @@ function calcRetireStepUp(baseMonthly, eduPerChild, fund) {
                    label: ch.name + '（'+ch.yomi+'）卒業 +' + eduPerChild.toFixed(2) + '万/月' });
   });
   if(fund && fund.monthly > 0){
-    // 専用ファンドはりとの入学年(univYear)に終了→翌年から振替
+    // 専用ファンドは対象の子の入学年(univYear)に終了→翌年から振替
     steps.push({ year: fund.ch.univYear + 1, amount: fund.monthly,
                  label: fund.ch.name + '（'+fund.ch.yomi+'）専用ファンド終了 +' + fund.monthly + '万/月' });
   }
@@ -1364,7 +1364,7 @@ function recalc(){
       // 資金移動の内訳表示
       const initRow = fund.initial > 0
         ? `<div style="margin-top:6px;padding:5px 8px;background:#fef9c3;border-radius:6px;font-size:.7rem;color:#713f12;">
-             💸 初期費用 <strong>${fund.initial}万</strong> → しゅうとの余剰から控除・ファンドへ移動
+             💸 初期費用 <strong>${fund.initial}万</strong> → 長男の余剰から控除・ファンドへ移動
            </div>` : '';
       const monthlyRow = fund.monthly > 0
         ? `<div style="margin-top:4px;padding:5px 8px;background:#fef9c3;border-radius:6px;font-size:.7rem;color:#713f12;">
@@ -1678,7 +1678,7 @@ function updateChildCard(ch,r,fund=null,eduPerChild=0){
       }
     }
   }
-  // 専用ファンド初期費用の控除チップ（しゅうとの余剰から差し引いた分）
+  // 専用ファンド初期費用の控除チップ（長男の余剰から差し引いた分）
   if(r.fundDeduct && r.fundDeduct > 0)
     chips.push(`<span class="chip amber">💰 ファンド初期費用 ▼${r.fundDeduct}万</span>`);
   if(r.hsCost>0){
