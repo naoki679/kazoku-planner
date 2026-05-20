@@ -224,6 +224,7 @@ input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
     <button onclick="openCfg()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:700;letter-spacing:.03em;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,.28)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">⚙️ 設定</button>
+    <button onclick="resetStorage()" style="background:rgba(220,38,38,.25);border:1px solid rgba(220,38,38,.5);color:#fca5a5;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:.75rem;font-weight:700;transition:background .2s;" onmouseover="this.style.background='rgba(220,38,38,.45)'" onmouseout="this.style.background='rgba(220,38,38,.25)'">🔄 リセット</button>
     <div class="hd-badge">📊 リアルタイム試算</div>
     <div id="save-badge" style="font-size:.65rem;color:rgba(255,255,255,.45);display:none;">💾 保存済み</div>
   </div>
@@ -2614,6 +2615,15 @@ function loadFromStorage(){
       });
     }
   } catch(e){ console.warn('読込エラー:', e); }
+}
+
+// ============================================================
+// RESET
+// ============================================================
+function resetStorage(){
+  if(!confirm('すべての設定を初期値に戻しますか？\n（入力した名前・金額・選択肢がリセットされます）')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
 }
 
 // ============================================================
