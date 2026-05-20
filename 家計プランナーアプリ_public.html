@@ -1,0 +1,2591 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家族の教育・老後資金プランナー</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --navy:#1a2b4a; --navy2:#2d3f63; --gold:#d4a843; --goldf:#f0c96b;
+  --green:#16a34a; --green2:#22c55e; --red:#dc2626; --red2:#fca5a5;
+  --blue:#3b82f6; --purple:#8b5cf6; --amber:#f59e0b; --teal:#10b981;
+  --bg:#f1f5f9; --card:#fff; --border:#e2e8f0;
+  --text:#1e293b; --muted:#64748b;
+  --shadow:0 1px 14px rgba(0,0,0,.07);
+  --r:14px; --r-sm:8px; --sidebar:290px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Meiryo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* HEADER */
+.hd{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 3px 16px rgba(0,0,0,.25);position:sticky;top:0;z-index:200;}
+.hd-title{font-size:1.05rem;font-weight:800;letter-spacing:.03em;}
+.hd-title span{color:var(--goldf);}
+.hd-meta{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:2px;}
+.hd-badge{background:rgba(212,168,67,.2);border:1px solid var(--gold);color:var(--goldf);padding:4px 12px;border-radius:20px;font-size:.7rem;font-weight:700;}
+
+/* LAYOUT */
+.app{display:flex;height:calc(100vh - 58px);overflow:hidden;}
+.sidebar{width:var(--sidebar);background:var(--card);border-right:1px solid var(--border);overflow-y:auto;padding:18px 16px;flex-shrink:0;}
+.main{flex:1;overflow-y:auto;padding:20px 24px;}
+
+/* SIDEBAR */
+.sb-section{margin-bottom:20px;}
+.sb-title{font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.sb-field{margin-bottom:12px;}
+.sb-label{font-size:.72rem;color:var(--muted);font-weight:600;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;}
+.val-badge{background:var(--bg);border-radius:4px;padding:1px 7px;font-size:.72rem;font-weight:800;color:var(--navy);}
+
+/* Number input ±  */
+.num-row{display:flex;align-items:center;gap:6px;}
+.num-row input[type=number]{flex:1;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:7px 8px;font-size:.9rem;font-weight:700;color:var(--navy);text-align:right;outline:none;transition:border .2s;-moz-appearance:textfield;}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{display:none;margin:0;}
+.num-row input[type=number]::-webkit-inner-spin-button{display:none;}
+.num-row input[type=number]:focus{border-color:var(--blue);}
+.num-btn{width:28px;height:28px;border:1px solid var(--border);background:var(--bg);border-radius:6px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:700;transition:all .15s;flex-shrink:0;}
+.num-btn:hover{background:var(--navy);color:#fff;border-color:var(--navy);}
+.input-unit{font-size:.7rem;color:var(--muted);}
+
+/* Slider */
+.slider-wrap{display:flex;align-items:center;gap:8px;}
+input[type=range]{flex:1;height:4px;accent-color:var(--blue);cursor:pointer;}
+.slider-val{font-size:.8rem;font-weight:800;color:var(--navy);min-width:40px;text-align:right;}
+
+/* Toggle */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;}
+.toggle-label{font-size:.78rem;color:var(--text);}
+.toggle{position:relative;display:inline-block;width:36px;height:20px;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:20px;transition:.3s;}
+.toggle-slider:before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
+.toggle input:checked+.toggle-slider{background:var(--green);}
+.toggle input:checked+.toggle-slider:before{transform:translateX(16px);}
+
+/* Select */
+.sb-select{width:100%;border:1px solid var(--border);border-radius:var(--r-sm);padding:6px 8px;font-size:.82rem;color:var(--navy);outline:none;background:var(--bg);cursor:pointer;}
+
+.divider{height:1px;background:var(--border);margin:14px 0;}
+
+/* GOAL BANNER */
+.goal-banner{border-radius:var(--r);padding:18px 22px;margin-bottom:20px;display:flex;flex-direction:column;gap:6px;}
+.goal-banner.ok{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;}
+.goal-banner.warn{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px solid #fcd34d;}
+.goal-banner.danger{background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1.5px solid #fca5a5;}
+.gs-big{font-size:1.1rem;font-weight:900;color:var(--navy);}
+.gs-big strong{font-size:1.5rem;color:var(--green);}
+.gs-big.warn strong{color:#b45309;}
+.gs-sub{font-size:.78rem;color:var(--muted);}
+.gs-hint{font-size:.75rem;padding:6px 10px;background:rgba(255,255,255,.7);border-radius:6px;color:#374151;margin-top:4px;}
+
+/* NEED MONTHLY BOX */
+.need-box{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #93c5fd;border-radius:var(--r);padding:14px 18px;margin-bottom:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.need-item{text-align:center;}
+.need-lbl{font-size:.65rem;color:var(--muted);font-weight:600;margin-bottom:3px;}
+.need-val{font-size:1.1rem;font-weight:900;color:var(--navy);}
+.need-val.ok{color:var(--green);}
+.need-val.warn{color:#b45309;}
+.need-sub{font-size:.62rem;color:var(--muted);margin-top:1px;}
+
+/* EDUCATION CARDS */
+.edu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px;}
+.edu-card{background:var(--card);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);border-top:3px solid transparent;position:relative;}
+.edu-card.ok-card{border-top-color:var(--green);}
+.edu-card.warn-card{border-top-color:var(--amber);}
+.edu-card.danger-card{border-top-color:var(--red);}
+
+.ec-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.ec-name{font-size:.95rem;font-weight:900;}
+.ec-year{font-size:.68rem;color:var(--muted);margin-top:2px;}
+.ec-badge{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:6px;white-space:nowrap;}
+.ec-badge.ok{background:#f0fdf4;color:#15803d;}
+.ec-badge.warn{background:#fffbeb;color:#92400e;}
+.ec-badge.danger{background:#fef2f2;color:#991b1b;}
+
+.ec-progress{height:7px;background:var(--border);border-radius:99px;overflow:hidden;margin:10px 0;}
+.ec-fill{height:100%;border-radius:99px;transition:width 1s cubic-bezier(.4,0,.2,1);}
+
+.ec-amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;}
+.eca-block{background:var(--bg);border-radius:6px;padding:6px 8px;text-align:center;}
+.eca-lbl{font-size:.6rem;color:var(--muted);font-weight:600;margin-bottom:1px;}
+.eca-val{font-size:.82rem;font-weight:800;}
+
+.ec-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.chip{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:5px;}
+.chip.green{background:#f0fdf4;color:#15803d;}
+.chip.blue{background:#eff6ff;color:#1d4ed8;}
+.chip.amber{background:#fffbeb;color:#92400e;}
+.chip.red{background:#fef2f2;color:#991b1b;}
+.chip.purple{background:#f3e8ff;color:#7e22ce;}
+.chip.teal{background:#f0fdfa;color:#0f766e;}
+
+/* RETIREMENT CARD */
+.retire-card{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);margin-bottom:20px;border-top:3px solid var(--teal);}
+.retire-inner{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;}
+.ring-wrap{display:flex;align-items:center;gap:14px;}
+.ring-pct-text{font-size:1.6rem;font-weight:900;}
+.ring-sub{font-size:.7rem;color:var(--muted);}
+.retire-details{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
+.rd-block{background:var(--bg);border-radius:8px;padding:8px 10px;}
+.rd-lbl{font-size:.63rem;color:var(--muted);font-weight:600;margin-bottom:2px;}
+.rd-val{font-size:.92rem;font-weight:800;}
+.prog-bar{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin:10px 0 4px;}
+.prog-fill{height:100%;border-radius:99px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+
+/* YEAR TABLE */
+.chart-card{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);margin-bottom:20px;}
+.chart-title{font-size:.88rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+
+/* Responsive */
+@media(max-width:900px){
+  .app{flex-direction:column;height:auto;overflow:visible;}
+  .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);}
+  .edu-grid{grid-template-columns:1fr;}
+  .need-box{grid-template-columns:1fr;}
+}
+
+/* Animation */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.edu-card{animation:fadeUp .35s ease both;}
+.edu-card:nth-child(2){animation-delay:.06s;}
+.edu-card:nth-child(3){animation-delay:.12s;}
+.edu-card:nth-child(4){animation-delay:.18s;}
+
+/* Ring SVG */
+.ring-svg{flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div>
+    <div class="hd-title">🏡 <span>家族の</span>教育・老後資金プランナー</div>
+    <div class="hd-meta" id="hd-meta">基準: 読み込み中...</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button onclick="openCfg()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:700;letter-spacing:.03em;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,.28)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">⚙️ 前提条件を設定</button>
+    <div class="hd-badge">📊 リアルタイム試算</div>
+    <div id="save-badge" style="font-size:.65rem;color:rgba(255,255,255,.45);display:none;">💾 保存済み</div>
+  </div>
+</div>
+
+<div class="app">
+
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar">
+
+  <!-- 月々の積立 -->
+  <div class="sb-section">
+    <div class="sb-title">💰 月々の積立</div>
+
+    <div class="sb-field">
+      <div class="sb-label">教育用（4人合計）<span class="val-badge" id="badge-edu">8万円/月</span></div>
+      <div class="num-row">
+        <button class="num-btn" onclick="adj('eduMonthly',-1)">−</button>
+        <input type="number" id="eduMonthly" value="2" min="0" max="100" step="1" oninput="recalc()">
+        <button class="num-btn" onclick="adj('eduMonthly',1)">＋</button>
+        <span class="input-unit">万/月</span>
+      </div>
+    </div>
+
+    <div class="sb-field">
+      <div class="sb-label">老後用 <span class="val-badge" id="badge-retire">5万円/月</span></div>
+      <div class="num-row">
+        <button class="num-btn" onclick="adj('retireMonthly',-1)">−</button>
+        <input type="number" id="retireMonthly" value="3" min="0" max="100" step="1" oninput="recalc()">
+        <button class="num-btn" onclick="adj('retireMonthly',1)">＋</button>
+        <span class="input-unit">万/月</span>
+      </div>
+    </div>
+
+    <div style="background:var(--bg);border-radius:8px;padding:10px 12px;font-size:.78rem;">
+      合計 <strong id="badge-total" style="color:var(--navy);font-size:.95rem;">13万円/月</strong>
+      <span style="color:var(--muted);"> ／ 月</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 教育完了後→老後振替シミュレーション -->
+  <div class="sb-section">
+    <div class="sb-title">🔄 教育完了後の振替</div>
+    <div class="sb-field">
+      <div class="toggle-row">
+        <span class="toggle-label" style="font-size:.8rem;">学費完了後に老後へ自動振替</span>
+        <label class="toggle"><input type="checkbox" id="stepUpOn" onchange="recalc()"><span class="toggle-slider"></span></label>
+      </div>
+      <div id="step-up-detail" style="display:none;margin-top:8px;">
+        <div style="font-size:.68rem;color:var(--muted);margin-bottom:6px;">各子の学費終了時に教育費を老後積立へ振替</div>
+        <div id="step-up-schedule" style="font-size:.68rem;line-height:1.8;"></div>
+        <div id="step-up-result" style="margin-top:8px;padding:7px 10px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:8px;border:1px solid #86efac;font-size:.72rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 大学費用・補助金 -->
+  <div class="sb-section">
+    <div class="sb-title">🎓 大学費用・補助金</div>
+    <div class="sb-field">
+      <div class="sb-label">国公立 年間費用 <span class="val-badge" id="badge-univcost-pub">100万円/年</span></div>
+      <div class="num-row">
+        <button class="num-btn" onclick="adj('univCostPublic',-10)">−</button>
+        <input type="number" id="univCostPublic" value="100" min="50" max="300" step="10" oninput="recalc()">
+        <button class="num-btn" onclick="adj('univCostPublic',10)">＋</button>
+        <span class="input-unit">万/年</span>
+      </div>
+    </div>
+    <div class="sb-field">
+      <div class="sb-label">私立 年間費用 <span class="val-badge" id="badge-univcost-pri">150万円/年</span></div>
+      <div class="num-row">
+        <button class="num-btn" onclick="adj('univCostPrivate',-10)">−</button>
+        <input type="number" id="univCostPrivate" value="150" min="50" max="500" step="10" oninput="recalc()">
+        <button class="num-btn" onclick="adj('univCostPrivate',10)">＋</button>
+        <span class="input-unit">万/年</span>
+      </div>
+    </div>
+    <div style="font-size:.67rem;color:var(--muted);line-height:1.5;background:var(--bg);padding:7px 9px;border-radius:6px;">
+      ※国公立：授業料54万＋生活費等<br>　私立：授業料100万＋生活費等 が目安
+    </div>
+    <div class="sb-field">
+      <div class="toggle-row" id="subsidy-row">
+        <span class="toggle-label">多子世帯補助金を適用</span>
+        <label class="toggle"><input type="checkbox" id="subsidyOn" checked onchange="recalc()"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 奨学金 -->
+  <div class="sb-section">
+    <div class="sb-title">📜 奨学金</div>
+    <div class="sb-field">
+      <div class="toggle-row">
+        <span class="toggle-label">奨学金を利用する</span>
+        <label class="toggle"><input type="checkbox" id="scholOn" checked onchange="recalc()"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+    <div id="schol-detail" style="display:block;">
+      <div class="sb-field" style="margin-top:10px;">
+        <div class="sb-label">種別</div>
+        <select class="sb-select" id="scholType" onchange="recalc()">
+          <option value="grant">給付型（返済不要）</option>
+          <option value="type1">第一種 無利子貸与（15年返済）</option>
+          <option value="type2" selected>第二種 有利子貸与（20年返済）</option>
+        </select>
+      </div>
+      <!-- 第二種：利率設定 -->
+      <div id="schol-rate-wrap" style="display:none;margin-bottom:8px;">
+        <div class="sb-label" style="margin-bottom:4px;">
+          貸与利率（年利%）<span class="val-badge" id="badge-scholrate">2.0%</span>
+        </div>
+        <div class="num-row">
+          <button class="num-btn" onclick="adjF('scholRate',-0.1,0,3)">−</button>
+          <input type="number" id="scholRate" value="2.0" min="0" max="3" step="0.1" oninput="recalc()">
+          <button class="num-btn" onclick="adjF('scholRate',0.1,0,3)">＋</button>
+          <span class="input-unit">%/年</span>
+        </div>
+        <div style="font-size:.63rem;color:#64748b;line-height:1.6;margin-top:5px;background:#f8fafc;padding:5px 8px;border-radius:6px;">
+          📊 <strong>JASSO実績（令和8年度・利率固定方式）</strong><br>
+          基本月額 2.722% ／ 利率見直し方式 1.874%<br>
+          直近推移: R3年 0.27% → R5年 0.74% → R7年 1.61% → R8年 2.72%<br>
+          <span style="color:#dc2626;">※法定上限 3%。将来の利率は変動します。</span>
+        </div>
+      </div>
+      <div id="schol-type-note" style="font-size:.68rem;color:#92400e;background:#fffbeb;padding:5px 9px;border-radius:6px;margin-bottom:8px;"></div>
+      <div style="font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:6px;">子どもごとの月額（0=使わない）</div>
+      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px 6px;align-items:center;">
+        <div id="schol-row-s" style="display:contents;">
+          <span style="color:#3b82f6;font-size:.73rem;font-weight:700;" id="schol-name-s">長男</span>
+          <input type="number" id="sSchol" value="3" min="0" max="12" step="1" oninput="recalc()" style="border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;font-size:.85rem;font-weight:700;color:var(--navy);text-align:right;width:100%;-moz-appearance:textfield;">
+          <span style="font-size:.65rem;color:var(--muted);">万/月</span>
+        </div>
+        <div id="schol-row-k" style="display:contents;">
+          <span style="color:#8b5cf6;font-size:.73rem;font-weight:700;" id="schol-name-k">次男</span>
+          <input type="number" id="kSchol" value="3" min="0" max="12" step="1" oninput="recalc()" style="border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;font-size:.85rem;font-weight:700;color:var(--navy);text-align:right;width:100%;-moz-appearance:textfield;">
+          <span style="font-size:.65rem;color:var(--muted);">万/月</span>
+        </div>
+        <div id="schol-row-a" style="display:contents;">
+          <span style="color:#10b981;font-size:.73rem;font-weight:700;" id="schol-name-a">三男</span>
+          <input type="number" id="aSchol" value="3" min="0" max="12" step="1" oninput="recalc()" style="border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;font-size:.85rem;font-weight:700;color:var(--navy);text-align:right;width:100%;-moz-appearance:textfield;">
+          <span style="font-size:.65rem;color:var(--muted);">万/月</span>
+        </div>
+        <div id="schol-row-b" style="display:contents;">
+          <span style="color:#f59e0b;font-size:.73rem;font-weight:700;" id="schol-name-b">長女</span>
+          <input type="number" id="bSchol" value="0" min="0" max="12" step="1" oninput="recalc()" style="border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;font-size:.85rem;font-weight:700;color:var(--navy);text-align:right;width:100%;-moz-appearance:textfield;">
+          <span style="font-size:.65rem;color:var(--muted);">万/月</span>
+        </div>
+      </div>
+      <div id="schol-summary" style="background:#fffbeb;border-radius:7px;padding:8px 10px;font-size:.68rem;color:#78350f;margin-top:8px;line-height:1.7;"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 教育資金 投資運用 -->
+  <div class="sb-section">
+    <div class="sb-title">📈 教育資金 投資運用</div>
+    <div class="sb-field">
+      <div class="toggle-row">
+        <span class="toggle-label">投資運用を使う</span>
+        <label class="toggle"><input type="checkbox" id="eduInvestOn" onchange="recalc()"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+    <div id="edu-invest-detail" style="display:none;">
+      <!-- 運用利回り -->
+      <div class="sb-field" style="margin-top:10px;">
+        <div class="sb-label">運用利回り（年率）<span class="val-badge" id="badge-edu-invest-return">5.0%</span></div>
+        <div class="slider-wrap">
+          <input type="range" id="eduInvestReturn" min="0" max="8" step="0.5" value="5" oninput="recalc()">
+          <div class="slider-val" id="badge-edu-invest-val">5.0%</div>
+        </div>
+        <div style="font-size:.62rem;color:#64748b;line-height:1.5;background:#f0fdf4;padding:5px 8px;border-radius:6px;margin-top:5px;">
+          📊 oルカン（全世界株式）長期平均 5〜7%／バランス型 3〜5%<br>
+          <span style="color:#dc2626;">※元本保証なし。過去実績は将来を保証しません</span>
+        </div>
+      </div>
+      <!-- 子ども別 運用する積立の選択 -->
+      <div class="sb-field" style="margin-top:10px;">
+        <div class="sb-label" style="margin-bottom:6px;">運用に回す子どもを選択</div>
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px 8px;align-items:center;font-size:.75rem;">
+          <div id="invest-row-s" style="display:contents;">
+            <span style="color:#3b82f6;font-weight:700;" id="invest-name-s">長男</span>
+            <span style="color:var(--muted);font-size:.68rem;" id="invest-hint-s">─</span>
+            <label class="toggle" style="transform:scale(0.85);transform-origin:right;">
+              <input type="checkbox" id="sInvest" onchange="recalc()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div id="invest-row-k" style="display:contents;">
+            <span style="color:#8b5cf6;font-weight:700;" id="invest-name-k">次男</span>
+            <span style="color:var(--muted);font-size:.68rem;" id="invest-hint-k">─</span>
+            <label class="toggle" style="transform:scale(0.85);transform-origin:right;">
+              <input type="checkbox" id="kInvest" onchange="recalc()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div id="invest-row-a" style="display:contents;">
+            <span style="color:#10b981;font-weight:700;" id="invest-name-a">三男</span>
+            <span style="color:var(--muted);font-size:.68rem;" id="invest-hint-a">─</span>
+            <label class="toggle" style="transform:scale(0.85);transform-origin:right;">
+              <input type="checkbox" id="aInvest" onchange="recalc()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div id="invest-row-b" style="display:contents;">
+            <span style="color:#f59e0b;font-weight:700;" id="invest-name-b">長女</span>
+            <span style="color:var(--muted);font-size:.68rem;" id="invest-hint-b">─</span>
+            <label class="toggle" style="transform:scale(0.85);transform-origin:right;">
+              <input type="checkbox" id="bInvest" onchange="recalc()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div id="edu-invest-summary" style="margin-top:8px;background:#ecfdf5;border-radius:7px;padding:8px 10px;font-size:.7rem;color:#14532d;line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 子ども専用 教育投資ファンド -->
+  <div class="sb-section">
+    <div class="sb-title">💰 子ども専用 教育投資ファンド</div>
+    <div style="font-size:.67rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">
+      特定の子どもの教育費を、兄の余剰資金などを元手に<br>投資信託で中長期運用するシミュレーション
+    </div>
+    <div class="sb-field">
+      <div class="toggle-row">
+        <span class="toggle-label">専用ファンドを使う</span>
+        <label class="toggle"><input type="checkbox" id="fundOn" onchange="recalc()"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+    <div id="fund-detail" style="display:none;">
+      <!-- 対象の子ども -->
+      <div class="sb-field" style="margin-top:10px;">
+        <div class="sb-label">対象の子ども</div>
+        <select class="sb-select" id="fundTarget" onchange="recalc()">
+          <option value="s">長男（ちょうなん）</option>
+          <option value="k">次男（じなん）</option>
+          <option value="a">三男（さんなん）</option>
+          <option value="b" selected>長女（ちょうじょ）</option>
+        </select>
+      </div>
+      <!-- 運用開始年 -->
+      <div class="sb-field">
+        <div class="sb-label">運用開始年 <span class="val-badge" id="badge-fund-holdyrs">─年間</span></div>
+        <div class="num-row">
+          <button class="num-btn" onclick="adj('fundStartYear',-1)">−</button>
+          <input type="number" id="fundStartYear" value="2026" min="2020" max="2060" step="1" oninput="recalc()">
+          <button class="num-btn" onclick="adj('fundStartYear',1)">＋</button>
+          <span class="input-unit">年</span>
+        </div>
+      </div>
+      <!-- 初期投資額 -->
+      <div class="sb-field">
+        <div class="sb-label">初期投資額（一括）</div>
+        <div class="num-row">
+          <button class="num-btn" onclick="adj('fundInitial',-10)">−</button>
+          <input type="number" id="fundInitial" value="100" min="0" max="2000" step="10" oninput="recalc()">
+          <button class="num-btn" onclick="adj('fundInitial',10)">＋</button>
+          <span class="input-unit">万円</span>
+        </div>
+      </div>
+      <!-- 月額積立 -->
+      <div class="sb-field">
+        <div class="sb-label">月額積立</div>
+        <div class="num-row">
+          <button class="num-btn" onclick="adj('fundMonthly',-1)">−</button>
+          <input type="number" id="fundMonthly" value="1" min="0" max="50" step="1" oninput="recalc()">
+          <button class="num-btn" onclick="adj('fundMonthly',1)">＋</button>
+          <span class="input-unit">万/月</span>
+        </div>
+      </div>
+      <!-- 利回り（共用） -->
+      <div class="sb-field">
+        <div class="sb-label">運用利回り（年率）<span class="val-badge" id="badge-fund-rate">5.0%</span></div>
+        <div class="slider-wrap">
+          <input type="range" id="fundRate" min="0" max="8" step="0.5" value="5" oninput="recalc()">
+          <div class="slider-val" id="badge-fund-rate-val">5.0%</div>
+        </div>
+        <div style="font-size:.62rem;color:#64748b;margin-top:4px;">
+          オルカン長期平均 5〜7%／バランス型 3〜5%
+        </div>
+      </div>
+      <!-- 結果表示 -->
+      <div id="fund-result" style="margin-top:10px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:10px 12px;font-size:.72rem;color:#14532d;line-height:2;"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 詳細設定 -->
+  <div class="sb-section">
+    <div class="sb-title">⚙️ 詳細設定</div>
+    <div class="sb-field">
+      <div class="sb-label">老後目標額 <span class="val-badge" id="badge-retire-target">2000万円</span></div>
+      <div class="num-row">
+        <button class="num-btn" onclick="adj('retireTarget',-100)">−</button>
+        <input type="number" id="retireTarget" value="2000" min="500" max="5000" step="100" oninput="recalc()">
+        <button class="num-btn" onclick="adj('retireTarget',100)">＋</button>
+        <span class="input-unit">万円</span>
+      </div>
+    </div>
+    <div class="sb-field">
+      <div class="sb-label">投資利回り（年率）</div>
+      <div class="slider-wrap">
+        <input type="range" id="investReturn" min="0" max="10" step="0.5" value="5" oninput="recalc()">
+        <div class="slider-val" id="badge-return">4.0%</div>
+      </div>
+    </div>
+    <!-- Per-child type selects (hidden but functional) -->
+    <div style="margin-top:10px;">
+      <div style="font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:6px;">🎓 大学進路</div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 8px;align-items:center;font-size:.75rem;">
+        <span style="color:#3b82f6;font-weight:700;">長男</span>
+        <select class="sb-select" id="sType" onchange="recalc()" style="padding:4px 6px;">
+          <option value="private">私立</option><option value="public">国公立</option>
+        </select>
+        <span style="color:#8b5cf6;font-weight:700;">次男</span>
+        <select class="sb-select" id="kType" onchange="recalc()" style="padding:4px 6px;">
+          <option value="private">私立</option><option value="public">国公立</option>
+        </select>
+        <span style="color:#10b981;font-weight:700;">三男</span>
+        <select class="sb-select" id="aType" onchange="recalc()" style="padding:4px 6px;">
+          <option value="private">私立</option><option value="public">国公立</option>
+        </select>
+        <span style="color:#f59e0b;font-weight:700;">長女</span>
+        <select class="sb-select" id="bType" onchange="recalc()" style="padding:4px 6px;">
+          <option value="private">私立</option><option value="public">国公立</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 高校進路設定 -->
+    <div style="margin-top:14px;">
+      <div style="font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:5px;">🏫 高校進路</div>
+      <div style="font-size:.61rem;color:var(--muted);margin-bottom:6px;line-height:1.5;background:#fff7ed;padding:5px 8px;border-radius:6px;">
+        📊 令和5年度文科省調査（授業料は就学支援金で実質0円）<br>
+        <table style="width:100%;border-collapse:collapse;margin-top:3px;">
+          <tr><td style="color:#64748b;padding:1px 0;">公立 ベース</td><td style="text-align:right;font-weight:700;">約30万/年×3年＝90万</td></tr>
+          <tr><td style="color:#64748b;padding:1px 0;">公立 ＋塾あり</td><td style="text-align:right;font-weight:700;color:#b45309;">+25万/年×3年＝+75万</td></tr>
+          <tr><td style="color:#64748b;padding:1px 0;">私立 ベース</td><td style="text-align:right;font-weight:700;">約71万/年×3年＝213万</td></tr>
+          <tr><td style="color:#64748b;padding:1px 0;">私立 ＋塾あり</td><td style="text-align:right;font-weight:700;color:#b45309;">+35万/年×3年＝+105万</td></tr>
+        </table>
+      </div>
+      <div style="font-size:.63rem;color:#64748b;margin-bottom:5px;font-weight:600;">学校 ／ 塾・予備校</div>
+      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px 6px;align-items:center;font-size:.75rem;">
+        <div id="hs-row-s" style="display:contents;">
+          <span style="color:#3b82f6;font-weight:700;" id="hs-name-s">長男</span>
+          <select class="sb-select" id="sHsType" onchange="recalc()" style="padding:4px 5px;font-size:.72rem;">
+            <option value="public">公立</option>
+            <option value="private">私立</option>
+            <option value="none">なし</option>
+          </select>
+          <label class="toggle" style="transform:scale(0.82);transform-origin:right;" title="塾・予備校あり">
+            <input type="checkbox" id="sHsJuku" checked onchange="recalc()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div id="hs-row-k" style="display:contents;">
+          <span style="color:#8b5cf6;font-weight:700;" id="hs-name-k">次男</span>
+          <select class="sb-select" id="kHsType" onchange="recalc()" style="padding:4px 5px;font-size:.72rem;">
+            <option value="public">公立</option>
+            <option value="private">私立</option>
+            <option value="none">なし</option>
+          </select>
+          <label class="toggle" style="transform:scale(0.82);transform-origin:right;" title="塾・予備校あり">
+            <input type="checkbox" id="kHsJuku" checked onchange="recalc()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div id="hs-row-a" style="display:contents;">
+          <span style="color:#10b981;font-weight:700;" id="hs-name-a">三男</span>
+          <select class="sb-select" id="aHsType" onchange="recalc()" style="padding:4px 5px;font-size:.72rem;">
+            <option value="public">公立</option>
+            <option value="private">私立</option>
+            <option value="none">なし</option>
+          </select>
+          <label class="toggle" style="transform:scale(0.82);transform-origin:right;" title="塾・予備校あり">
+            <input type="checkbox" id="aHsJuku" checked onchange="recalc()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div id="hs-row-b" style="display:contents;">
+          <span style="color:#f59e0b;font-weight:700;" id="hs-name-b">長女</span>
+          <select class="sb-select" id="bHsType" onchange="recalc()" style="padding:4px 5px;font-size:.72rem;">
+            <option value="public">公立</option>
+            <option value="private">私立</option>
+            <option value="none">なし</option>
+          </select>
+          <label class="toggle" style="transform:scale(0.82);transform-origin:right;" title="塾・予備校あり">
+            <input type="checkbox" id="bHsJuku" checked onchange="recalc()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <div style="font-size:.6rem;color:#94a3b8;margin-top:5px;">🔴トグル＝塾・予備校（オフで塾なし）</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 老後資金→教育費 取り崩し -->
+  <div class="sb-section">
+    <div class="sb-title">🏦 老後資金の教育費取り崩し</div>
+    <div style="font-size:.67rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">
+      老後積立の一部を特定の年に引き出し、<br>子どもの教育資金に充当するシミュレーション
+    </div>
+    <div class="sb-field">
+      <div class="toggle-row">
+        <span class="toggle-label">取り崩しを使う</span>
+        <label class="toggle"><input type="checkbox" id="withdrawOn" onchange="recalc()"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+    <div id="withdraw-detail" style="display:none;">
+      <div class="sb-field" style="margin-top:10px;">
+        <div class="sb-label">充当先の子ども</div>
+        <select class="sb-select" id="withdrawTarget" onchange="recalc()">
+          <option value="s">長男</option>
+          <option value="k">次男</option>
+          <option value="a">三男</option>
+          <option value="b">長女</option>
+        </select>
+      </div>
+      <div class="sb-field">
+        <div class="sb-label">取り崩し年</div>
+        <div class="num-row">
+          <button class="num-btn" onclick="adj('withdrawYear',-1)">−</button>
+          <input type="number" id="withdrawYear" value="2028" min="2025" max="2055" step="1" oninput="recalc()">
+          <button class="num-btn" onclick="adj('withdrawYear',1)">＋</button>
+          <span class="input-unit">年</span>
+        </div>
+      </div>
+      <div class="sb-field">
+        <div class="sb-label">取り崩し額</div>
+        <div class="num-row">
+          <button class="num-btn" onclick="adj('withdrawAmt',-10)">−</button>
+          <input type="number" id="withdrawAmt" value="100" min="10" max="2000" step="10" oninput="recalc()">
+          <button class="num-btn" onclick="adj('withdrawAmt',10)">＋</button>
+          <span class="input-unit">万円</span>
+        </div>
+      </div>
+      <div id="withdraw-result" style="margin-top:10px;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:8px 11px;font-size:.7rem;color:#78350f;line-height:1.8;"></div>
+      <div style="font-size:.62rem;color:#94a3b8;margin-top:6px;line-height:1.5;">
+        ⚠️ 老後資金グラフにも取り崩しの影響が反映されます。<br>達成時期が遅くなる可能性があります。
+      </div>
+    </div>
+  </div>
+
+</div><!-- /sidebar -->
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <!-- ゴールサマリーバナー -->
+  <div class="goal-banner ok" id="goal-banner">
+    <span class="gs-big">計算中...</span>
+  </div>
+
+  <!-- 最低必要月額ボックス -->
+  <div class="need-box">
+    <div class="need-item">
+      <div class="need-lbl">教育費 最低必要月額</div>
+      <div class="need-val" id="need-edu">─</div>
+      <div class="need-sub">4人合計の最低ライン</div>
+    </div>
+    <div class="need-item">
+      <div class="need-lbl">老後資金 最低必要月額</div>
+      <div class="need-val" id="need-retire">─</div>
+      <div class="need-sub">2060年までに達成する月額</div>
+    </div>
+    <div class="need-item">
+      <div class="need-lbl">合計最低必要月額</div>
+      <div class="need-val" id="need-total">─</div>
+      <div class="need-sub" id="need-diff">─</div>
+    </div>
+  </div>
+
+  <!-- 教育資金 4枚カード -->
+  <div style="font-size:.82rem;font-weight:800;color:var(--muted);margin-bottom:10px;letter-spacing:.05em;">📚 教育資金 — 子ども別の見通し</div>
+  <div class="edu-grid">
+
+    <!-- ちょうなん -->
+    <div class="edu-card" id="card-s">
+      <div class="ec-head">
+        <div>
+          <div class="ec-name" style="color:#3b82f6;" id="name-s">長男（ちょうなん）</div>
+          <div class="ec-year" id="year-s">2028年入学</div>
+        </div>
+        <div class="ec-badge ok" id="badge-s">─</div>
+      </div>
+      <div style="font-size:.72rem;margin-bottom:4px;">達成率 <strong id="pct-s" style="color:#3b82f6;font-size:1.1rem;">─</strong>%</div>
+      <div class="ec-progress"><div class="ec-fill" id="bar-s" style="background:linear-gradient(90deg,#3b82f6,#60a5fa);width:0%"></div></div>
+      <div id="inv-row-s" style="display:none;margin-top:3px;">
+        <div style="font-size:.68rem;margin-bottom:2px;color:#059669;">💹 運用後 <strong id="pct-inv-s" style="color:#059669;font-size:.92rem;">─</strong>%</div>
+        <div class="ec-progress" style="height:4px;opacity:.75;"><div class="ec-fill" id="bar-inv-s" style="background:linear-gradient(90deg,#10b981,#34d399);width:0%"></div></div>
+      </div>
+      <div class="ec-amounts">
+        <div class="eca-block"><div class="eca-lbl">必要額</div><div class="eca-val" id="need-s" style="color:var(--navy);">─</div></div>
+        <div class="eca-block"><div class="eca-lbl">見込積立</div><div class="eca-val" id="save-s" style="color:#3b82f6;">─</div></div>
+        <div class="eca-block"><div class="eca-lbl">過不足</div><div class="eca-val" id="gap-s">─</div></div>
+      </div>
+      <div class="ec-chips" id="chips-s"></div>
+    </div>
+
+    <!-- じなん -->
+    <div class="edu-card" id="card-k">
+      <div class="ec-head">
+        <div>
+          <div class="ec-name" style="color:#8b5cf6;" id="name-k">次男（じなん）</div>
+          <div class="ec-year" id="year-k">2030年入学</div>
+        </div>
+        <div class="ec-badge ok" id="badge-k">─</div>
+      </div>
+      <div style="font-size:.72rem;margin-bottom:4px;">達成率 <strong id="pct-k" style="color:#8b5cf6;font-size:1.1rem;">─</strong>%</div>
+      <div class="ec-progress"><div class="ec-fill" id="bar-k" style="background:linear-gradient(90deg,#8b5cf6,#a78bfa);width:0%"></div></div>
+      <div id="inv-row-k" style="display:none;margin-top:3px;">
+        <div style="font-size:.68rem;margin-bottom:2px;color:#059669;">💹 運用後 <strong id="pct-inv-k" style="color:#059669;font-size:.92rem;">─</strong>%</div>
+        <div class="ec-progress" style="height:4px;opacity:.75;"><div class="ec-fill" id="bar-inv-k" style="background:linear-gradient(90deg,#10b981,#34d399);width:0%"></div></div>
+      </div>
+      <div class="ec-amounts">
+        <div class="eca-block"><div class="eca-lbl">必要額</div><div class="eca-val" id="need-k" style="color:var(--navy);">─</div></div>
+        <div class="eca-block"><div class="eca-lbl">見込積立</div><div class="eca-val" id="save-k" style="color:#8b5cf6;">─</div></div>
+        <div class="eca-block"><div class="eca-lbl">過不足</div><div class="eca-val" id="gap-k">─</div></div>
+      </div>
+      <div class="ec-chips" id="chips-k"></div>
+    </div>
+
+    <!-- さんなん -->
+    <div class="edu-card" id="card-a">
+      <div class="ec-head">
+        <div>
+          <div class="ec-name" style="color:#10b981;" id="name-a">三男（さんなん）</div>
+          <div class="ec-year" id="year-a">2031年入学</div>
+        </div>
+        <div class="ec-badge ok" id="badge-a">─</div>
+      </div>
+      <div style="font-size:.72rem;margin-bottom:4px;">達成率 <strong id="pct-a" style="color:#10b981;font-size:1.1rem;">─</strong>%</div>
+      <div class="ec-progress"><div class="ec-fill" id="bar-a" style="background:linear-gradient(90deg,#10b981,#34d399);width:0%"></div></div>
+      <div id="inv-row-a" style="display:none;margin-top:3px;">
+        <div style="font-size:.68rem;margin-bottom:2px;color:#059669;">💹 運用後 <strong id="pct-inv-a" style="color:#059669;font-size:.92rem;">─</strong>%</div>
+        <div class="ec-progress" style="height:4px;opacity:.75;"><div class="ec-fill" id="bar-inv-a" style="background:linear-gradient(90deg,#10b981,#34d399);width:0%"></div></div>
+      </div>
+      <div class="ec-amounts">
+        <div class="eca-block"><div class="eca-lbl">必要額</div><div class="eca-val" id="need-a" style="color:var(--navy);">─</div></div>
+        <div class="eca-block"><div class="eca-lbl">見込積立</div><div class="eca-val" id="save-a" style="color:#10b981;">─</div></div>
+        <div class="eca-block"><div class="eca-lbl">過不足</div><div class="eca-val" id="gap-a">─</div></div>
+      </div>
+      <div class="ec-chips" id="chips-a"></div>
+    </div>
+
+    <!-- ちょうじょ -->
+    <div class="edu-card" id="card-b">
+      <div class="ec-head">
+        <div>
+          <div class="ec-name" style="color:#f59e0b;" id="name-b">長女（ちょうじょ）</div>
+          <div class="ec-year" id="year-b">2042年入学</div>
+        </div>
+        <div class="ec-badge ok" id="badge-b">─</div>
+      </div>
+      <div style="font-size:.72rem;margin-bottom:4px;">達成率 <strong id="pct-b" style="color:#f59e0b;font-size:1.1rem;">─</strong>%</div>
+      <div class="ec-progress"><div class="ec-fill" id="bar-b" style="background:linear-gradient(90deg,#f59e0b,#fcd34d);width:0%"></div></div>
+      <div id="inv-row-b" style="display:none;margin-top:3px;">
+        <div style="font-size:.68rem;margin-bottom:2px;color:#059669;">💹 運用後 <strong id="pct-inv-b" style="color:#059669;font-size:.92rem;">─</strong>%</div>
+        <div class="ec-progress" style="height:4px;opacity:.75;"><div class="ec-fill" id="bar-inv-b" style="background:linear-gradient(90deg,#10b981,#34d399);width:0%"></div></div>
+      </div>
+      <div class="ec-amounts">
+        <div class="eca-block"><div class="eca-lbl">必要額</div><div class="eca-val" id="need-b" style="color:var(--navy);">─</div></div>
+        <div class="eca-block"><div class="eca-lbl">見込積立</div><div class="eca-val" id="save-b" style="color:#f59e0b;">─</div></div>
+        <div class="eca-block"><div class="eca-lbl">過不足</div><div class="eca-val" id="gap-b">─</div></div>
+      </div>
+      <div class="ec-chips" id="chips-b"></div>
+    </div>
+
+  </div><!-- /edu-grid -->
+
+  <!-- 老後資金カード -->
+  <div style="font-size:.82rem;font-weight:800;color:var(--muted);margin-bottom:10px;letter-spacing:.05em;">🌙 老後資金 — 2,000万円ゴール</div>
+  <div class="retire-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div style="font-size:.9rem;font-weight:800;">夫婦の老後2,000万円プロジェクト</div>
+      <div class="ec-badge ok" id="badge-retire-status" style="font-size:.75rem;padding:4px 12px;">計算中</div>
+    </div>
+    <div class="retire-inner">
+      <svg class="ring-svg" width="80" height="80" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="32" fill="none" stroke="#e2e8f0" stroke-width="8"/>
+        <circle id="ring-retire" cx="40" cy="40" r="32" fill="none" stroke="#10b981" stroke-width="8"
+          stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="201"
+          transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)"/>
+        <text x="40" y="44" text-anchor="middle" font-size="13" font-weight="900" fill="#10b981" id="ring-retire-text">─%</text>
+      </svg>
+      <div style="flex:1;">
+        <div class="prog-bar"><div class="prog-fill" id="bar-retire" style="background:linear-gradient(90deg,#10b981,#34d399);width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-bottom:10px;">
+          <span>現在: <strong style="color:#10b981;" id="retire-current-disp">320万円</strong></span>
+          <span>目標: <strong id="retire-target-disp" style="color:var(--navy);">2,000万円</strong></span>
+        </div>
+        <div class="retire-details">
+          <div class="rd-block">
+            <div class="rd-lbl">不足額</div>
+            <div class="rd-val" id="retire-gap" style="color:var(--red);">─</div>
+          </div>
+          <div class="rd-block">
+            <div class="rd-lbl">達成見込み</div>
+            <div class="rd-val" id="retire-year" style="color:#10b981;">─</div>
+          </div>
+          <div class="rd-block">
+            <div class="rd-lbl">老後専用積立</div>
+            <div class="rd-val" id="retire-monthly-disp" style="color:var(--navy);">─</div>
+          </div>
+        </div>
+        <!-- 振替シミュレーション結果行 -->
+        <div id="retire-stepup-row" style="display:none;margin-top:10px;padding:8px 12px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:8px;border:1px solid #6ee7b7;">
+          <div style="font-size:.7rem;color:#065f46;font-weight:700;margin-bottom:3px;">🔄 振替シミュレーション</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:.72rem;color:#047857;">振替後の達成年：<strong id="retire-stepup-year" style="font-size:1rem;color:#059669;">─</strong></span>
+            <span id="retire-stepup-diff" style="font-size:.72rem;font-weight:800;color:#059669;"></span>
+          </div>
+          <div id="retire-stepup-hint" style="font-size:.66rem;color:#065f46;margin-top:3px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 年毎の推移テーブル -->
+  <div class="chart-card">
+    <div class="chart-title">📅 年毎の推移（子ども別・独立した学費口座）
+      <span style="font-size:.7rem;font-weight:400;color:var(--muted);">🟦入学年 ／ 🟩在学・卒業 ／ 🔴残高不足</span>
+    </div>
+    <div style="background:#eff6ff;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.75rem;color:#1e40af;line-height:1.7;">
+      📌 <strong>各テーブルはその子1人分の専用口座の残高です。</strong><br>
+      「月積立×12」＝ 教育用月積立 ÷ 4人 × 12ヶ月 分が毎年積み上がります。<br>
+      一時金（保険・SBI）が入る年に大きく増え、大学在学中（4年間）は学費が引かれます。<br>
+      教育用積立に運用利回りは乗りません（貯金想定）。老後用のみ投資利回り適用です。
+    </div>
+    <div id="yearly-tables"></div>
+  </div>
+
+  <!-- 老後推移チャート -->
+  <div class="chart-card">
+    <div class="chart-title">📈 老後資金 達成シミュレーション</div>
+    <div id="retireChartWrap" style="width:100%;overflow-x:auto;"></div>
+  </div>
+
+  <!-- 教育資金 投資運用チャート -->
+  <div class="chart-card" id="edu-invest-chart-card" style="display:none;">
+    <div class="chart-title">💹 教育資金 投資運用シミュレーション</div>
+    <div style="font-size:.73rem;color:var(--muted);margin-bottom:10px;">
+      毎月の教育積立＋一時収入（保険・SBI）を投資信託で運用した場合の残高比較。<br>
+      実線: <span style="color:#10b981;font-weight:700;">運用あり</span>　点線: <span style="color:#94a3b8;font-weight:700;">運用なし（貯金）</span>
+    </div>
+    <div id="eduInvestChartWrap" style="width:100%;overflow-x:auto;"></div>
+    <div id="edu-invest-effect-table" style="margin-top:14px;overflow-x:auto;"></div>
+  </div>
+
+  <!-- 子ども別 教育資金積立グラフ -->
+  <div class="chart-card" id="per-child-chart-card" style="display:none;margin-top:16px;">
+    <div class="chart-title">👧‍👦 お子さん別 教育資金積立シミュレーション</div>
+    <div style="font-size:.73rem;color:var(--muted);margin-bottom:10px;">
+      各子の教育資金が大学入学までにどう積み上がるかを個別に表示。<br>
+      実線: <span style="font-weight:700;">運用あり</span>　点線: <span style="color:#94a3b8;font-weight:700;">運用なし（貯金）</span>
+      　<span style="background:#fef9c3;padding:1px 6px;border-radius:4px;color:#713f12;font-weight:700;">▼ 大学在学期間は学費を差引</span>
+    </div>
+    <div id="perChildChartWrap" style="width:100%;overflow-x:auto;"></div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ============================================================
+// CONFIG（前提条件 — 設定モーダルから変更可能）
+// ============================================================
+const CHILD_COLORS = ['#3b82f6','#8b5cf6','#10b981','#f59e0b'];
+const CHILD_IDS    = ['s','k','a','b'];
+
+let CONFIG = {
+  baseYear: new Date().getFullYear(),
+  retireCurrent: 100,
+  numChildren: 4,
+  children: [
+    { name:'長男', yomi:'ちょうなん', current:0,
+      insurance:0, insYear:0, sbi:0, sbiYear:0,
+      univYear: new Date().getFullYear() + 4, subsidyYears:0 },
+    { name:'次男', yomi:'じなん',    current:0,
+      insurance:0, insYear:0, sbi:0, sbiYear:0,
+      univYear: new Date().getFullYear() + 7, subsidyYears:0 },
+    { name:'三男', yomi:'さんなん',  current:0,
+      insurance:0, insYear:0, sbi:0, sbiYear:0,
+      univYear: new Date().getFullYear() + 9, subsidyYears:0 },
+    { name:'長女', yomi:'ちょうじょ',current:0,
+      insurance:0, insYear:0, sbi:0, sbiYear:0,
+      univYear: new Date().getFullYear() + 14, subsidyYears:0 },
+  ]
+};
+
+function buildState(){
+  CURRENT_YEAR  = CONFIG.baseYear;
+  RETIRE_CURRENT = CONFIG.retireCurrent;
+  CHILDREN = CONFIG.children.slice(0, CONFIG.numChildren).map((c,i)=>({
+    ...c,
+    id: CHILD_IDS[i],
+    color: CHILD_COLORS[i],
+    univEndYear: c.univYear + 4
+  }));
+}
+
+// 可変グローバル
+let CURRENT_YEAR   = CONFIG.baseYear;
+let RETIRE_CURRENT = CONFIG.retireCurrent;
+let CHILDREN       = [];
+buildState();
+
+const SUBSIDY = { public:{admission:26,annual:54}, private:{admission:26,annual:70} };
+// 高校費用定数（令和5年度 文科省調査・実質負担額）
+// 公立: 学習費総額60万/年 - 就学支援金(授業料相当)5万/年 = 55万/年 × 3年 = 165万
+// 私立: 学習費総額118万/年 - 就学支援金12万/年 = 106万/年 × 3年 = 318万
+// 高校費用定数（令和5年度 文科省調査）
+const HS_COST = {
+  public:  { base: 30, juku: 25, label: '公立高校' },
+  private: { base: 71, juku: 35, label: '私立高校' },
+  none:    { base: 0,  juku: 0,  label: '高校なし' }
+};
+let retireChartInst = null;
+
+// ============================================================
+// HELPERS
+// ============================================================
+function v(id){ const el=document.getElementById(id); return el?parseFloat(el.value)||0:0; }
+function adj(id,delta){ const el=document.getElementById(id); el.value=Math.max(parseFloat(el.min)||0,Math.min(parseFloat(el.max)||99999,(parseFloat(el.value)||0)+delta)); recalc(); }
+function adjF(id,delta,mn,mx){ const el=document.getElementById(id); el.value=Math.round((Math.max(mn,Math.min(mx,(parseFloat(el.value)||0)+delta)))*10)/10; recalc(); }
+function setRing(id,pct,circ){ const el=document.getElementById(id); if(!el)return; el.style.strokeDashoffset=circ*(1-Math.min(pct,100)/100); }
+
+function getScholAmt(ch){
+  if(!document.getElementById('scholOn').checked) return 0;
+  return v(ch.id+'Schol');
+}
+
+function getRepayInfo(ch){
+  const monthly = getScholAmt(ch);
+  if(monthly <= 0) return null;
+  const type = document.getElementById('scholType').value;
+  if(type === 'grant') return null;
+  const totalLoan = monthly * 48;
+
+  if(type === 'type1'){
+    // 第一種：無利子・15年（180回）均等返済
+    const repayYears = 15;
+    const repayMonthly = Math.round(totalLoan / (repayYears * 12) * 10) / 10;
+    const totalRepay = repayMonthly * repayYears * 12;
+    return { totalLoan, repayMonthly, repayYears, annualRate: 0, totalRepay,
+             startYear: ch.univEndYear + 1, endYear: ch.univEndYear + repayYears,
+             rateLabel: '無利子' };
+  }
+
+  if(type === 'type2'){
+    // 第二種：有利子・20年（240回）元利均等返済
+    // 利率はJASSO公式データに基づきユーザー指定（デフォルト2.0%）
+    // 出典: JASSO 令和8年度 利率固定方式 2.722%、利率見直し方式 1.874%
+    const repayYears = 20;
+    const annualRate = Math.min(3, Math.max(0, v('scholRate'))); // 法定上限3%
+    const n = repayYears * 12;
+
+    let repayMonthly, totalRepay, totalInterest;
+    if(annualRate <= 0){
+      // 利率0%の場合は均等割り
+      repayMonthly = Math.round(totalLoan / n * 100) / 100;
+      totalRepay   = Math.round(repayMonthly * n * 10) / 10;
+      totalInterest = 0;
+    } else {
+      const monthlyRate = annualRate / 100 / 12;
+      // 元利均等返済（アニュイティ）計算
+      repayMonthly = Math.round(
+        totalLoan * monthlyRate * Math.pow(1 + monthlyRate, n)
+        / (Math.pow(1 + monthlyRate, n) - 1) * 100
+      ) / 100;
+      totalRepay    = Math.round(repayMonthly * n * 10) / 10;
+      totalInterest = Math.round((totalRepay - totalLoan) * 10) / 10;
+    }
+
+    return {
+      totalLoan, repayMonthly, repayYears, annualRate, totalRepay, totalInterest,
+      startYear: ch.univEndYear + 1, endYear: ch.univEndYear + repayYears,
+      rateLabel: annualRate.toFixed(1) + '%（年利）'
+    };
+  }
+  return null;
+}
+
+function getUnivCost(type){
+  return type==='private' ? v('univCostPrivate') : v('univCostPublic');
+}
+
+function calcChild(ch, eduPerChild, sibBonus=0, sibBonusYear=0){
+  const subsidyOn = document.getElementById('subsidyOn').checked;
+  const type = document.getElementById(ch.id+'Type').value;
+  const univCost = getUnivCost(type);
+  const s = SUBSIDY[type]||SUBSIDY.public;
+  const subsidyAmt = (subsidyOn&&ch.subsidyYears>0) ? (s.admission+s.annual*ch.subsidyYears) : 0;
+  const scholAmt = getScholAmt(ch) * 48;
+  // ── 高校費用 ──
+  const hsTypeVal  = document.getElementById(ch.id+'HsType')?.value || 'public';
+  const hsJukuOn   = document.getElementById(ch.id+'HsJuku')?.checked ?? true;
+  const hsBase3y   = (HS_COST[hsTypeVal]?.base  || 0) * 3;
+  const hsJuku3y   = hsJukuOn ? (HS_COST[hsTypeVal]?.juku || 0) * 3 : 0;
+  const hsCost     = hsBase3y + hsJuku3y;
+  const netCost = Math.max(0, univCost*4 + hsCost - subsidyAmt - scholAmt);
+  const insGain = (ch.insurance>0&&ch.insYear>0&&ch.insYear<=ch.univYear) ? ch.insurance : 0;
+  const sbiGain = (ch.sbi>0&&ch.sbiYear>0&&ch.sbiYear<=ch.univYear) ? ch.sbi : 0;
+  const bonus = insGain+sbiGain;
+  const yrs = Math.max(0,ch.univYear-CURRENT_YEAR);
+  // 兄の余剰は卒業年(sibBonusYear)以降に使えれば補填有効
+  const effSibBonus = (sibBonus>0 && sibBonusYear>0 && sibBonusYear<=ch.univEndYear) ? sibBonus : 0;
+  // ── 老後資金取り崩し（対象の子どもの場合のみ加算）──
+  const withdrawOn = document.getElementById('withdrawOn')?.checked ?? false;
+  const withdrawTgt = document.getElementById('withdrawTarget')?.value;
+  const withdrawBoost = (withdrawOn && withdrawTgt === ch.id) ? (v('withdrawAmt') || 0) : 0;
+  const savings = ch.current + bonus + effSibBonus + eduPerChild*yrs*12 + withdrawBoost;
+  const gap = netCost - savings;
+  const pct = netCost<=0 ? 100 : Math.min(100,Math.round(savings/netCost*100));
+  const minMonthly = yrs>0 ? Math.max(0,gap/(yrs*12)) : (gap>0?999:0);
+  const surplusForNext = Math.max(0, Math.round(-gap)); // 余剰→次の弟へ
+  return {netCost,savings,gap,pct,insGain,sbiGain,bonus,subsidyAmt,scholAmt,minMonthly,yrs,
+          sibBonus:effSibBonus,surplusForNext,hsCost,hsTypeVal,withdrawBoost};
+}
+
+// ============================================================
+// 教育資金 投資運用計算
+// ============================================================
+function calcEduInvest(ch, eduPerChild, annualRate) {
+  // annualRate: 年率（例: 0.03）
+  const r = annualRate / 12; // 月利
+  const yrs = Math.max(0, ch.univYear - CURRENT_YEAR);
+  const n = yrs * 12; // 積立月数
+
+  // 1. 月積立のFV（月複利）
+  let savingsFV;
+  if (r > 0 && n > 0) {
+    savingsFV = eduPerChild * (Math.pow(1 + r, n) - 1) / r;
+  } else {
+    savingsFV = eduPerChild * n;
+  }
+
+  // 2. 初期貯金の複利成長（現在〜大学入学まで）
+  const currentFV = ch.current * Math.pow(1 + annualRate, yrs);
+
+  // 3. 保険金の複利成長（insYear〜univYear）
+  let insFV = 0;
+  if (ch.insurance > 0 && ch.insYear > 0 && ch.insYear <= ch.univYear) {
+    const insYrs = ch.univYear - ch.insYear;
+    insFV = ch.insurance * Math.pow(1 + annualRate, insYrs);
+  }
+
+  // 4. SBIの複利成長（sbiYear〜univYear）
+  let sbiFV = 0;
+  if ((ch.sbi || 0) > 0 && ch.sbiYear > 0 && ch.sbiYear <= ch.univYear) {
+    const sbiYrs = ch.univYear - ch.sbiYear;
+    sbiFV = ch.sbi * Math.pow(1 + annualRate, sbiYrs);
+  }
+
+  const totalFV   = Math.round(currentFV + insFV + sbiFV + savingsFV);
+  const totalBase = Math.round(ch.current + (ch.insurance > 0 && ch.insYear <= ch.univYear ? ch.insurance : 0) +
+                    ((ch.sbi||0) > 0 && ch.sbiYear <= ch.univYear ? ch.sbi : 0) + eduPerChild * n);
+  const investGain = Math.max(0, totalFV - totalBase);
+
+  return {
+    currentFV:   Math.round(currentFV),
+    insFV:       Math.round(insFV),
+    sbiFV:       Math.round(sbiFV),
+    savingsFV:   Math.round(savingsFV),
+    totalFV,
+    totalBase,
+    investGain
+  };
+}
+
+// ============================================================
+// 子ども専用 教育投資ファンド計算
+// ============================================================
+function calcEduFund() {
+  if(!document.getElementById('fundOn').checked) return null;
+  const targetId  = document.getElementById('fundTarget')?.value;
+  const ch = CHILDREN.find(c => c.id === targetId);
+  if(!ch) return null;
+
+  const initial    = v('fundInitial');    // 初期投資額（万円）
+  const monthly    = v('fundMonthly');    // 月額積立（万円）
+  const startYear  = v('fundStartYear');  // 運用開始年
+  const annualRate = v('fundRate') / 100; // 年利
+
+  const holdYears = Math.max(0, ch.univYear - startYear); // 運用期間（年）
+  const n = holdYears * 12;  // 月数
+  const r = annualRate / 12; // 月利
+
+  // 初期投資の将来価値
+  const initialFV = Math.round(initial * Math.pow(1 + annualRate, holdYears));
+
+  // 月額積立の将来価値（月複利）
+  let monthlyFV = 0;
+  if(r > 0 && n > 0){
+    monthlyFV = Math.round(monthly * (Math.pow(1 + r, n) - 1) / r);
+  } else {
+    monthlyFV = Math.round(monthly * n);
+  }
+
+  const totalFV   = initialFV + monthlyFV;
+  const totalBase = Math.round(initial + monthly * n);
+  const gain      = totalFV - totalBase;
+  const gainRate  = totalBase > 0 ? Math.round(gain / totalBase * 100) : 0;
+
+  return {
+    targetId, ch, initial, monthly, startYear, annualRate,
+    holdYears, initialFV, monthlyFV, totalFV, totalBase, gain, gainRate
+  };
+}
+
+// 兄→弟へのカスケード計算（全子一括）
+// fund が渡された場合: 最初の子(ちょうなん)の余剰からfund.initialを控除してから次弟へ回す
+function calcAllCascaded(eduPerChild, fund=null){
+  let sibSurplus=0, sibSurplusYear=0;
+  return CHILDREN.map((ch, idx)=>{
+    const r = calcChild(ch, eduPerChild, sibSurplus, sibSurplusYear);
+    let nextSurplus = r.surplusForNext;
+    // 専用ファンド初期費用: 最初の子(ちょうなん)の余剰から差し引く
+    if(fund && idx === 0 && fund.initial > 0){
+      const deduct = Math.min(fund.initial, Math.max(0, r.surplusForNext));
+      r.fundDeduct = deduct;                    // 控除額を記録（チップ表示用）
+      nextSurplus = Math.max(0, r.surplusForNext - deduct);
+      r.surplusForNext = nextSurplus;           // カードの「次弟へ」表示も更新
+    }
+    sibSurplus = nextSurplus;
+    sibSurplusYear = ch.univEndYear;
+    return r;
+  });
+}
+
+function calcRetireYear(monthly){
+  const target=v('retireTarget'), rate=v('investReturn')/100;
+  const wOn = document.getElementById('withdrawOn')?.checked ?? false;
+  const wAmt = wOn ? (v('withdrawAmt') || 0) : 0;
+  const wYear = wOn ? Math.round(v('withdrawYear') || 0) : null;
+  let pool=RETIRE_CURRENT;
+  for(let yr=CURRENT_YEAR+1;yr<=2065;yr++){
+    pool=pool*(1+rate)+monthly*12;
+    if(wOn && wAmt>0 && yr===wYear) pool -= wAmt;
+    if(pool>=target) return yr;
+  }
+  return null;
+}
+
+// 教育費完了後に老後積立へ段階振替するシミュレーション
+// 各子の univEndYear 翌年から eduPerChild を加算、ファンド終了年(univYear)からfundMonthlyを加算
+function calcRetireStepUp(baseMonthly, eduPerChild, fund) {
+  const target  = v('retireTarget');
+  const rate    = v('investReturn') / 100;
+  const YEARS   = 45;
+
+  // ステップアップスケジュールを構築
+  // { year: 振替開始年, amount: 万/月, label: 説明 }
+  const steps = [];
+  CHILDREN.forEach(ch => {
+    if(eduPerChild > 0)
+      steps.push({ year: ch.univEndYear + 1, amount: eduPerChild,
+                   label: ch.name + '（'+ch.yomi+'）卒業 +' + eduPerChild.toFixed(2) + '万/月' });
+  });
+  if(fund && fund.monthly > 0){
+    // 専用ファンドはちょうじょの入学年(univYear)に終了→翌年から振替
+    steps.push({ year: fund.ch.univYear + 1, amount: fund.monthly,
+                 label: fund.ch.name + '（'+fund.ch.yomi+'）専用ファンド終了 +' + fund.monthly + '万/月' });
+  }
+  steps.sort((a,b) => a.year - b.year);
+
+  // ── 老後資金取り崩し設定を読み込み ──
+  const wOn2   = document.getElementById('withdrawOn')?.checked ?? false;
+  const wAmt2  = wOn2 ? (v('withdrawAmt') || 0) : 0;
+  const wYear2 = wOn2 ? Math.round(v('withdrawYear') || 0) : null;
+
+  let pool    = RETIRE_CURRENT;
+  let monthly = baseMonthly;
+  const dataStepUp = [pool];
+  const dataBase   = [pool];
+  let poolBase     = RETIRE_CURRENT;
+  let achieveBase  = null, achieveStep = null;
+
+  for(let i = 1; i <= YEARS; i++){
+    const yr = CURRENT_YEAR + i;
+    // 振替ステップアップ適用
+    steps.forEach(s => { if(yr === s.year) monthly += s.amount; });
+    pool     = pool     * (1 + rate) + monthly     * 12;
+    poolBase = poolBase * (1 + rate) + baseMonthly * 12;
+    // ── 老後資金取り崩し適用（両ラインに同様に影響）──
+    if(wOn2 && wAmt2 > 0 && yr === wYear2){
+      pool     -= wAmt2;
+      poolBase -= wAmt2;
+    }
+    dataStepUp.push(Math.round(pool));
+    dataBase  .push(Math.round(poolBase));
+    if(!achieveBase && poolBase >= target) achieveBase = yr;
+    if(!achieveStep && pool     >= target) achieveStep = yr;
+  }
+
+  return { dataStepUp, dataBase, steps, achieveBase, achieveStep,
+           years: Array.from({length: YEARS + 1}, (_, i) => CURRENT_YEAR + i) };
+}
+
+function calcRetireMinMonthly(){
+  const target=v('retireTarget'), rate=v('investReturn')/100;
+  // binary search
+  let lo=0,hi=100;
+  for(let i=0;i<50;i++){
+    const mid=(lo+hi)/2;
+    if(calcRetireYear(mid)) hi=mid; else lo=mid;
+  }
+  return Math.ceil(hi*10)/10;
+}
+
+// ============================================================
+// RECALC
+// ============================================================
+function recalc(){
+  // ヘッダーメタ・老後残高 動的更新
+  const metaEl=document.getElementById('hd-meta');
+  if(metaEl) metaEl.textContent='基準: '+CURRENT_YEAR+'年 ／ 子ども'+CHILDREN.length+'人';
+  const retCurEl=document.getElementById('retire-current-disp');
+  if(retCurEl) retCurEl.textContent=RETIRE_CURRENT.toLocaleString()+'万円';
+
+  const eduMonthly = v('eduMonthly');
+  const retireMonthly = v('retireMonthly');
+  // 専用ファンドを先に計算し、月額をeduMonthlyから先取り控除
+  const fund = calcEduFund();
+  const fundMonthlyDeduct = (fund && fund.monthly > 0) ? fund.monthly : 0;
+  const eduPerChild = Math.max(0, (eduMonthly - fundMonthlyDeduct) / CHILDREN.length);
+
+  // Badge updates
+  document.getElementById('badge-edu').textContent = eduMonthly+'万円/月';
+  document.getElementById('badge-retire').textContent = retireMonthly+'万円/月';
+  document.getElementById('badge-total').textContent = (eduMonthly+retireMonthly)+'万円/月';
+  document.getElementById('badge-univcost-pub').textContent = v('univCostPublic')+'万円/年';
+  document.getElementById('badge-univcost-pri').textContent = v('univCostPrivate')+'万円/年';
+  document.getElementById('badge-return').textContent = v('investReturn').toFixed(1)+'%';
+  document.getElementById('badge-retire-target').textContent = v('retireTarget').toLocaleString()+'万円';
+
+  // Scholarship UI
+  const scholOn = document.getElementById('scholOn').checked;
+  document.getElementById('schol-detail').style.display = scholOn?'block':'none';
+  if(scholOn){
+    const type = document.getElementById('scholType').value;
+    // 第二種の利率入力を表示切替
+    const rateWrap = document.getElementById('schol-rate-wrap');
+    if(rateWrap) rateWrap.style.display = type==='type2' ? 'block' : 'none';
+    if(type==='type2'){
+      const rateVal = Math.min(3, Math.max(0, v('scholRate')));
+      const badgeR = document.getElementById('badge-scholrate');
+      if(badgeR) badgeR.textContent = rateVal.toFixed(1)+'%';
+    }
+    const notes = {
+      grant:  '返済不要（給付型）',
+      type1:  '無利子 ／ 卒業翌年から15年（180回）均等返済',
+      type2:  '有利子 ／ 卒業翌年から20年（240回）元利均等返済'
+    };
+    document.getElementById('schol-type-note').textContent = notes[type]||'';
+    const lines = CHILDREN.map(ch=>{
+      const amt = v(ch.id+'Schol');
+      if(amt<=0) return '';
+      const repay = getRepayInfo(ch);
+      let repayText = '返済なし（給付型）';
+      if(repay){
+        repayText = `${repay.startYear}〜${repay.endYear}年 月${repay.repayMonthly}万`;
+        if(repay.totalInterest>0)
+          repayText += ` <span style="color:#dc2626;">利子+${repay.totalInterest}万</span>`;
+      }
+      return `<span style="color:${ch.color};font-weight:800;">${ch.name}</span>: 月${amt}万（計${amt*48}万）<br><span style="padding-left:1em;">↳ ${repayText}</span>`;
+    }).filter(Boolean);
+    document.getElementById('schol-summary').innerHTML =
+      lines.length ? lines.join('<br>') : '<span style="color:var(--muted);">各子の月額を入力してください</span>';
+  }
+
+  // 教育資金 投資運用UI
+  const eduInvestOn = document.getElementById('eduInvestOn').checked;
+  document.getElementById('edu-invest-detail').style.display = eduInvestOn ? 'block' : 'none';
+  if(eduInvestOn){
+    const rate = v('eduInvestReturn');
+    document.getElementById('badge-edu-invest-return').textContent = rate.toFixed(1)+'%';
+    document.getElementById('badge-edu-invest-val').textContent = rate.toFixed(1)+'%';
+    const annualRate = rate / 100;
+    // 子ども別サマリー（投資ON/OFFで分けて表示）
+    const investLines = CHILDREN.map(ch => {
+      const isOn = document.getElementById(ch.id+'Invest')?.checked ?? false;
+      const hintEl = document.getElementById('invest-hint-'+ch.id);
+      const yrs = Math.max(0, ch.univYear - CURRENT_YEAR);
+      if(!isOn){
+        if(hintEl) hintEl.textContent = '貯金のまま';
+        return `<span style="color:${ch.color};font-weight:800;">${ch.name}</span>: <span style="color:#94a3b8;">運用なし</span>`;
+      }
+      const inv = calcEduInvest(ch, eduPerChild, annualRate);
+      if(hintEl) hintEl.textContent = yrs > 0 ? '+'+inv.investGain+'万円' : '期間なし';
+      if(inv.investGain <= 0) return `<span style="color:${ch.color};font-weight:800;">${ch.name}</span>: 運用効果 ─（積立期間なし）`;
+      const baseAmt = Math.round(eduPerChild * yrs * 12);
+      return `<span style="color:${ch.color};font-weight:800;">${ch.name}</span>: 元本${baseAmt}万 → <strong style="color:#059669;">${inv.savingsFV}万</strong>（+${inv.investGain}万）`;
+    });
+    document.getElementById('edu-invest-summary').innerHTML = investLines.join('<br>');
+  } else {
+    // 運用OFFのとき、ヒント欄をクリア
+    CHILDREN.forEach(ch => {
+      const hintEl = document.getElementById('invest-hint-'+ch.id);
+      if(hintEl) hintEl.textContent = '─';
+    });
+  }
+
+  // 専用ファンドUI更新（fund は冒頭で計算済み）
+  const fundOnEl = document.getElementById('fundOn');
+  document.getElementById('fund-detail').style.display = fundOnEl?.checked ? 'block' : 'none';
+  if(fund){
+    const rate = v('fundRate');
+    document.getElementById('badge-fund-rate').textContent = rate.toFixed(1)+'%';
+    document.getElementById('badge-fund-rate-val').textContent = rate.toFixed(1)+'%';
+    document.getElementById('badge-fund-holdyrs').textContent = fund.holdYears+'年間';
+    const resultEl = document.getElementById('fund-result');
+    if(resultEl){
+      const monthsBase = Math.round(fund.monthly * fund.holdYears * 12);
+      // 資金移動の内訳表示
+      const initRow = fund.initial > 0
+        ? `<div style="margin-top:6px;padding:5px 8px;background:#fef9c3;border-radius:6px;font-size:.7rem;color:#713f12;">
+             💸 初期費用 <strong>${fund.initial}万</strong> → ちょうなんの余剰から控除・ファンドへ移動
+           </div>` : '';
+      const monthlyRow = fund.monthly > 0
+        ? `<div style="margin-top:4px;padding:5px 8px;background:#fef9c3;border-radius:6px;font-size:.7rem;color:#713f12;">
+             💸 月積立 <strong>${fund.monthly}万/月</strong> → 教育費 ${eduMonthly}万から先取り控除（残り${(eduMonthly-fundMonthlyDeduct).toFixed(1)}万÷${CHILDREN.length}人=各<strong>${eduPerChild.toFixed(2)}万/月</strong>）
+           </div>` : '';
+      resultEl.innerHTML =
+        `<div style="font-weight:900;color:#0f766e;font-size:.8rem;margin-bottom:4px;">
+           💹 ${fund.ch.name}（${fund.ch.yomi}）大学入学時の運用残高
+         </div>
+         <div style="display:grid;grid-template-columns:auto 1fr;gap:1px 8px;">
+           <span style="color:#64748b;">初期投資</span><span>${fund.initial}万 → <strong style="color:#059669;">${fund.initialFV}万円</strong></span>
+           <span style="color:#64748b;">月積立累計</span><span>${monthsBase}万 → <strong style="color:#059669;">${fund.monthlyFV}万円</strong></span>
+           <span style="color:#64748b;border-top:1px solid #86efac;padding-top:3px;margin-top:3px;">合計</span>
+           <span style="border-top:1px solid #86efac;padding-top:3px;margin-top:3px;">
+             元本${fund.totalBase}万 → <strong style="color:#059669;font-size:.85rem;">${fund.totalFV.toLocaleString()}万円</strong>
+           </span>
+           <span style="color:#64748b;">運用効果</span><span style="color:#059669;font-weight:900;">+${fund.gain.toLocaleString()}万円（+${fund.gainRate}%）</span>
+           <span style="color:#64748b;">不足額との比較</span>
+           <span id="fund-vs-gap" style="font-weight:700;"></span>
+         </div>
+         ${initRow}${monthlyRow}`;
+    }
+  }
+
+  // ── 老後資金取り崩しUI ──
+  const withdrawOnEl  = document.getElementById('withdrawOn');
+  const withdrawDetailEl = document.getElementById('withdraw-detail');
+  if(withdrawDetailEl) withdrawDetailEl.style.display = withdrawOnEl?.checked ? 'block' : 'none';
+  if(withdrawOnEl?.checked){
+    const withdrawTargetEl = document.getElementById('withdrawTarget');
+    if(withdrawTargetEl){
+      const prevW = withdrawTargetEl.value;
+      withdrawTargetEl.innerHTML = CHILDREN.map(ch =>
+        `<option value="${ch.id}"${ch.id===prevW?' selected':''}>${ch.name}（${ch.yomi}）</option>`
+      ).join('');
+      if(!CHILDREN.find(ch=>ch.id===withdrawTargetEl.value) && CHILDREN.length>0)
+        withdrawTargetEl.value = CHILDREN[0].id;
+    }
+    const withdrawResEl = document.getElementById('withdraw-result');
+    if(withdrawResEl){
+      const wAmt = v('withdrawAmt');
+      const wYear = Math.round(v('withdrawYear'));
+      const wTgt  = document.getElementById('withdrawTarget')?.value;
+      const wCh   = CHILDREN.find(c => c.id === wTgt);
+      withdrawResEl.innerHTML = wAmt > 0 && wCh
+        ? `💸 <strong>${wYear}年</strong>に老後資金から<strong style="color:#dc2626;">${wAmt}万円</strong>を取り崩し<br>` +
+          `→ <span style="color:${wCh.color};font-weight:800;">${wCh.name}</span>（${wCh.yomi}）の教育資金へ充当<br>` +
+          `老後残高: ${RETIRE_CURRENT}万 <span style="color:#dc2626;">▼${wAmt}万 = ${RETIRE_CURRENT - wAmt}万</span>`
+        : '<span style="color:#92400e;">取り崩し条件を入力してください</span>';
+    }
+  }
+
+  // Per-child calculations（兄→弟カスケード補填あり、専用ファンド初期費用控除済み）
+  const results = calcAllCascaded(eduPerChild, fund);
+
+  // totalEduGap: 専用ファンドFVも差し引いたファンド込み過不足を合計
+  const totalEduGap = results.reduce((s, r, i) => {
+    const ch = CHILDREN[i];
+    const fundFV = (fund && fund.targetId === ch.id && fund.totalFV > 0) ? fund.totalFV : 0;
+    const adjGap = r.gap - fundFV; // ファンドがあればその分gap縮小
+    return s + Math.max(0, adjGap);
+  }, 0);
+
+  // Min needed: 専用ファンド対象の子はfundFVを差し引いてから最低月額を計算
+  const minEduPerChild = CHILDREN.map(ch => {
+    const r0 = calcChild(ch, 0); // 単独・積立0で必要額試算
+    const fundFVForMin = (fund && fund.targetId === ch.id && fund.totalFV > 0) ? fund.totalFV : 0;
+    if(fundFVForMin > 0){
+      // ファンドで補える分をgapから引いて再計算
+      const adjGap = Math.max(0, r0.gap - fundFVForMin);
+      return r0.yrs > 0 ? adjGap / (r0.yrs * 12) : (adjGap > 0 ? 999 : 0);
+    }
+    return r0.minMonthly;
+  });
+  const minEduTotal = minEduPerChild.reduce((a,b)=>a+b,0);
+  const minRetire = calcRetireMinMonthly();
+  const minTotal = minEduTotal + minRetire;
+  const currentTotal = eduMonthly + retireMonthly;
+  const diffTotal = currentTotal - minTotal;
+
+  const needEduEl = document.getElementById('need-edu');
+  needEduEl.textContent = Math.ceil(minEduTotal*10)/10 + '万円/月';
+  needEduEl.className = 'need-val '+(eduMonthly>=minEduTotal?'ok':'warn');
+
+  const needRetireEl = document.getElementById('need-retire');
+  needRetireEl.textContent = minRetire.toFixed(1) + '万円/月';
+  needRetireEl.className = 'need-val '+(retireMonthly>=minRetire?'ok':'warn');
+
+  const needTotalEl = document.getElementById('need-total');
+  needTotalEl.textContent = Math.ceil(minTotal*10)/10 + '万円/月';
+  needTotalEl.className = 'need-val '+(diffTotal>=0?'ok':'warn');
+  document.getElementById('need-diff').textContent =
+    diffTotal>=0 ? '月'+diffTotal.toFixed(1)+'万円 余裕あり ✅' : '月'+Math.abs(diffTotal).toFixed(1)+'万円 不足 ⚠️';
+
+  // Retirement
+  const retireYear = calcRetireYear(retireMonthly);
+  const retirePct = Math.min(100,Math.round(RETIRE_CURRENT/v('retireTarget')*100));
+  const retireGap = Math.max(0,v('retireTarget')-RETIRE_CURRENT);
+
+  setRing('ring-retire',retirePct,201);
+  const ringText = document.getElementById('ring-retire-text');
+  if(ringText) ringText.textContent=retirePct+'%';
+  document.getElementById('bar-retire').style.width=retirePct+'%';
+  document.getElementById('retire-target-disp').textContent=v('retireTarget').toLocaleString()+'万円';
+  document.getElementById('retire-gap').textContent='▲'+retireGap.toLocaleString()+'万円';
+  document.getElementById('retire-year').textContent=retireYear?retireYear+'年':'─';
+  document.getElementById('retire-monthly-disp').textContent=retireMonthly+'万円/月';
+
+  const rs = retirePct>=100?{bg:'#f0fdf4',cl:'#15803d',tx:'✅ 達成済'}:retireYear?{bg:'#f0fdf4',cl:'#15803d',tx:'📈 '+retireYear+'年達成'}:{bg:'#fef2f2',cl:'#991b1b',tx:'⚠️ 未達の恐れ'};
+  const rb=document.getElementById('badge-retire-status'); rb.textContent=rs.tx; rb.style.background=rs.bg; rb.style.color=rs.cl;
+
+  // Summary banner
+  const banner=document.getElementById('goal-banner');
+  const eduOk = totalEduGap<=0;
+  if(eduOk && retireYear){
+    const goalYear = Math.max(retireYear, Math.max(...CHILDREN.map(c=>c.univYear)));
+    banner.className='goal-banner ok';
+    banner.innerHTML=`<span class="gs-big">🎉 このペースで全ゴール達成見込み：<strong>${goalYear}年</strong></span>
+      <span class="gs-sub">老後資金 ${retireYear}年達成 ／ 4人分の学費 確保済み</span>
+      <span class="gs-hint">💡 最低必要月額は合計 ${Math.ceil(minTotal*10)/10}万円。現在 ${currentTotal}万円積み立てています。</span>`;
+  } else if(!eduOk){
+    const short=Math.ceil(minEduTotal-eduMonthly);
+    banner.className='goal-banner warn';
+    banner.innerHTML=`<span class="gs-big gs-big" style="color:#78350f;">⚠️ 教育用積立を月<strong style="color:#b45309;">${Math.ceil(minEduTotal*10)/10}万円</strong>以上にすると全員分確保できます</span>
+      <span class="gs-sub">現在の教育用: ${eduMonthly}万円/月 ／ 最低必要: ${Math.ceil(minEduTotal*10)/10}万円/月（あと${Math.max(0,(minEduTotal-eduMonthly)).toFixed(1)}万増やしてください）</span>
+      ${retireYear?`<span class="gs-hint">老後資金は ${retireYear}年 達成見込み</span>`:''}`;
+  } else {
+    banner.className='goal-banner danger';
+    banner.innerHTML=`<span class="gs-big" style="color:#991b1b;">⚠️ 老後資金の積立が不足しています</span>
+      <span class="gs-sub">老後用月積立を ${minRetire.toFixed(1)}万円以上に増やしてください</span>`;
+  }
+
+  // Child cards（専用ファンド情報・調整済みeduPerChildも渡す）
+  CHILDREN.forEach((ch,i)=>updateChildCard(ch,results[i],fund,eduPerChild));
+
+  // 子ども人数に応じてカード・サイドバー行の表示切替
+  CHILD_IDS.forEach((id, i) => {
+    const visible = i < CHILDREN.length;
+    const cardEl = document.getElementById('card-' + id);
+    if(cardEl) cardEl.style.display = visible ? '' : 'none';
+    const rowEl = document.getElementById('invest-row-' + id);
+    if(rowEl) rowEl.style.display = visible ? 'contents' : 'none';
+    const nameEl = document.getElementById('invest-name-' + id);
+    if(nameEl && CONFIG.children[i]) nameEl.textContent = CONFIG.children[i].name;
+    // 奨学金行も同期
+    const scholRowEl = document.getElementById('schol-row-' + id);
+    if(scholRowEl) scholRowEl.style.display = visible ? 'contents' : 'none';
+    const scholNameEl = document.getElementById('schol-name-' + id);
+    if(scholNameEl && CONFIG.children[i]) scholNameEl.textContent = CONFIG.children[i].name;
+    // 高校進路行も同期
+    const hsRowEl = document.getElementById('hs-row-' + id);
+    if(hsRowEl) hsRowEl.style.display = visible ? 'contents' : 'none';
+    const hsNameEl = document.getElementById('hs-name-' + id);
+    if(hsNameEl && CONFIG.children[i]) hsNameEl.textContent = CONFIG.children[i].name;
+  });
+
+  // 専用ファンド 対象の子どもセレクトを人数分に更新
+  const fundTargetEl = document.getElementById('fundTarget');
+  if(fundTargetEl){
+    const prevVal = fundTargetEl.value;
+    fundTargetEl.innerHTML = CHILDREN.map(ch =>
+      `<option value="${ch.id}"${ch.id===prevVal?' selected':''}>${ch.name}（${ch.yomi}）</option>`
+    ).join('');
+    // 選択値が消えた場合は最後の子を選択
+    if(!CHILDREN.find(ch=>ch.id===fundTargetEl.value) && CHILDREN.length>0){
+      fundTargetEl.value = CHILDREN[CHILDREN.length-1].id;
+    }
+  }
+
+  // 多子世帯補助: 3人未満は無効化
+  const subsidyEl  = document.getElementById('subsidyOn');
+  const subsidyRow = document.getElementById('subsidy-row');
+  const subsidyOk  = CHILDREN.length >= 3;
+  if(subsidyEl){
+    subsidyEl.disabled = !subsidyOk;
+    if(!subsidyOk) subsidyEl.checked = false;
+  }
+  if(subsidyRow){
+    subsidyRow.style.opacity  = subsidyOk ? '1' : '0.35';
+    subsidyRow.style.cursor   = subsidyOk ? '' : 'not-allowed';
+    subsidyRow.title          = subsidyOk ? '' : '3人以上のときに利用できます';
+  }
+
+  // Yearly tables
+  try { updateYearlyTables(eduPerChild); } catch(e){ console.error('年別テーブルエラー:', e); }
+
+  // 振替シミュレーション
+  const stepUpOn = document.getElementById('stepUpOn')?.checked ?? false;
+  const stepUpDetailEl = document.getElementById('step-up-detail');
+  if(stepUpDetailEl) stepUpDetailEl.style.display = stepUpOn ? 'block' : 'none';
+
+  let stepUpResult = null;
+  if(stepUpOn){
+    stepUpResult = calcRetireStepUp(retireMonthly, eduPerChild, fund);
+    // サイドバー: 振替スケジュール表示
+    const schedEl = document.getElementById('step-up-schedule');
+    if(schedEl){
+      schedEl.innerHTML = stepUpResult.steps.map(s =>
+        `<div>📅 <strong>${s.year}年</strong>〜 ${s.label}</div>`
+      ).join('');
+    }
+    // サイドバー: 結果表示
+    const resEl = document.getElementById('step-up-result');
+    if(resEl){
+      const diff = stepUpResult.achieveBase && stepUpResult.achieveStep
+        ? stepUpResult.achieveBase - stepUpResult.achieveStep : null;
+      const diffTxt = diff > 0 ? `⚡ ${diff}年早まる` : diff === 0 ? '変化なし' : '';
+      resEl.innerHTML = stepUpResult.achieveStep
+        ? `🎯 振替後: <strong style="color:#059669;font-size:.9rem;">${stepUpResult.achieveStep}年</strong> に達成 <span style="color:#d97706;font-weight:800;">${diffTxt}</span>`
+        : '2065年までに達成できません';
+    }
+    // 老後カード: 振替結果行の表示
+    const rowEl = document.getElementById('retire-stepup-row');
+    const yrEl  = document.getElementById('retire-stepup-year');
+    const diffEl = document.getElementById('retire-stepup-diff');
+    const hintEl = document.getElementById('retire-stepup-hint');
+    if(rowEl && yrEl && stepUpResult.achieveStep){
+      rowEl.style.display = 'block';
+      yrEl.textContent = stepUpResult.achieveStep + '年';
+      const diff2 = stepUpResult.achieveBase && stepUpResult.achieveStep
+        ? stepUpResult.achieveBase - stepUpResult.achieveStep : 0;
+      if(diffEl) diffEl.textContent = diff2 > 0 ? `⚡ ${diff2}年短縮！` : '';
+      if(hintEl){
+        const lastStep = stepUpResult.steps.length > 0 ? stepUpResult.steps[stepUpResult.steps.length - 1] : null;
+        const totalAdd = stepUpResult.steps.reduce((s,t) => s + t.amount, 0);
+        hintEl.textContent = `最終振替完了後の月積立: ${(retireMonthly + totalAdd).toFixed(1)}万円/月`;
+      }
+    } else if(rowEl) {
+      rowEl.style.display = 'none';
+    }
+  } else {
+    const rowEl = document.getElementById('retire-stepup-row');
+    if(rowEl) rowEl.style.display = 'none';
+  }
+
+  // Retire chart
+  updateRetireChart(retireMonthly, stepUpOn ? stepUpResult : null);
+
+  // 教育投資チャート（合計）
+  try { updateEduInvestChart(eduPerChild); } catch(e){ console.error('教育投資チャートエラー:', e); }
+  // 子ども別チャート
+  try { updatePerChildChart(eduPerChild); } catch(e){ console.error('子ども別チャートエラー:', e); }
+
+  // 自動保存
+  saveToStorage();
+}
+
+// ============================================================
+// CHILD CARD UPDATE
+// ============================================================
+function updateChildCard(ch,r,fund=null,eduPerChild=0){
+  // 名前・入学年（CONFIG変更時に反映）
+  const nameEl=document.getElementById('name-'+ch.id);
+  if(nameEl) nameEl.textContent=ch.name+'（'+ch.yomi+'）';
+  const yearEl=document.getElementById('year-'+ch.id);
+  if(yearEl){
+    const parts=[ch.univYear+'年入学', '貯金'+ch.current+'万'];
+    if(ch.insurance>0) parts.push('保険'+ch.insurance+'万('+ch.insYear+'年)');
+    if(ch.sbi>0) parts.push('SBI'+ch.sbi+'万('+ch.sbiYear+'年)');
+    yearEl.textContent=parts.join(' ／ ');
+  }
+  // 専用ファンド込みの調整値を計算（対象の子ならfundFVを見込積立に加算）
+  const fundFV = (fund && fund.targetId === ch.id && fund.totalFV > 0) ? fund.totalFV : 0;
+  const adjSavings = Math.round(r.savings + fundFV);
+  const adjGap     = Math.round(r.netCost - adjSavings);
+  const adjPct     = r.netCost <= 0 ? 100 : Math.min(100, Math.round(adjSavings / r.netCost * 100));
+
+  document.getElementById('pct-'+ch.id).textContent = adjPct;
+  document.getElementById('bar-'+ch.id).style.width = adjPct+'%';
+  document.getElementById('need-'+ch.id).textContent = Math.round(r.netCost).toLocaleString()+'万';
+  document.getElementById('save-'+ch.id).textContent = adjSavings.toLocaleString()+'万';
+
+  const gapEl=document.getElementById('gap-'+ch.id);
+  if(adjGap<=0){ gapEl.textContent='✅ +'+Math.abs(adjGap)+'万'; gapEl.style.color='var(--green)'; }
+  else { gapEl.textContent='▲'+adjGap+'万'; gapEl.style.color='var(--red)'; }
+
+  const card=document.getElementById('card-'+ch.id);
+  const badge=document.getElementById('badge-'+ch.id);
+  if(adjPct>=100){ card.className='edu-card ok-card'; badge.textContent='✅ 準備完了'; badge.className='ec-badge ok'; }
+  else if(adjPct>=70){ card.className='edu-card warn-card'; badge.textContent='🟡 あと少し'; badge.className='ec-badge warn'; }
+  else { card.className='edu-card danger-card'; badge.textContent='🔴 積立不足'; badge.className='ec-badge danger'; }
+
+  const chips=[];
+  if(r.insGain>0) chips.push(`<span class="chip blue">🔔 保険 +${r.insGain}万</span>`);
+  if(r.sbiGain>0) chips.push(`<span class="chip purple">📈 SBI +${r.sbiGain}万</span>`);
+  if(r.sibBonus>0) chips.push(`<span class="chip green">🔀 兄補填 +${r.sibBonus}万</span>`);
+  if(r.subsidyAmt>0) chips.push(`<span class="chip green">補助 ▼${r.subsidyAmt}万</span>`);
+  if(r.scholAmt>0) chips.push(`<span class="chip amber">奨学金 ▼${r.scholAmt}万</span>`);
+  // 投資運用効果チップ（子ども別ON/OFF対応）
+  const eduInvestOnEl = document.getElementById('eduInvestOn');
+  const childInvestEl = document.getElementById(ch.id+'Invest');
+  if(eduInvestOnEl && eduInvestOnEl.checked && childInvestEl && childInvestEl.checked){
+    const annualRate = v('eduInvestReturn') / 100;
+    // eduPerChild は専用ファンド月額控除後の値を使用
+    const inv = calcEduInvest(ch, eduPerChild || (v('eduMonthly') / CHILDREN.length), annualRate);
+    if(inv.investGain > 0) chips.push(`<span class="chip teal">💹 運用効果 +${inv.investGain}万</span>`);
+  }
+  // 専用ファンドチップ（対象の子どもカードに表示）
+  if(fund && fund.targetId === ch.id && fund.totalFV > 0){
+    chips.push(`<span class="chip teal" style="background:#ecfdf5;color:#0f766e;">💰 専用ファンド ${fund.totalFV.toLocaleString()}万</span>`);
+    // 不足額との比較（adjGap = ファンド込みの過不足）
+    const vsGapEl = document.getElementById('fund-vs-gap');
+    if(vsGapEl){
+      if(adjGap <= 0){
+        vsGapEl.innerHTML = `<span style="color:#16a34a;">✅ ファンド込みで完全カバー！（余裕 +${Math.abs(adjGap)}万）</span>`;
+      } else {
+        vsGapEl.innerHTML = `<span style="color:#b45309;">▲残り ${adjGap}万 不足（ファンド適用後）</span>`;
+      }
+    }
+  }
+  // 専用ファンド初期費用の控除チップ（ちょうなんの余剰から差し引いた分）
+  if(r.fundDeduct && r.fundDeduct > 0)
+    chips.push(`<span class="chip amber">💰 ファンド初期費用 ▼${r.fundDeduct}万</span>`);
+  if(r.hsCost>0){
+    const _hsBase = (HS_COST[r.hsTypeVal]?.base||0)*3;
+    const _hsJuku = r.hsCost - _hsBase;
+    const _jukuTxt = _hsJuku>0 ? `<span style="color:#b45309;"> (+塾${_hsJuku}万)</span>` : '';
+    chips.push(`<span class="chip" style="background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;">🏫 高校(${HS_COST[r.hsTypeVal]?.label||''}) ▲${r.hsCost}万${_jukuTxt}</span>`);
+  }
+  if(r.withdrawBoost>0) chips.push(`<span class="chip" style="background:#fef3c7;color:#92400e;border:1px solid #fde68a;">🏦 老後取り崩し +${r.withdrawBoost}万</span>`);
+  if(r.surplusForNext>0) chips.push(`<span class="chip blue">🔀 次弟へ +${r.surplusForNext}万</span>`);
+  // 最低月額チップ: ファンド込みでまだ不足している場合のみ表示
+  const adjMinMonthly = r.yrs > 0 ? Math.max(0, adjGap / (r.yrs * 12)) : (adjGap > 0 ? 999 : 0);
+  if(adjMinMonthly > 0.1) chips.push(`<span class="chip red">月${(Math.ceil(adjMinMonthly*10)/10)}万必要</span>`);
+  document.getElementById('chips-'+ch.id).innerHTML=chips.join('');
+
+  // ── 運用後達成率の表示 ──
+  const invRowEl  = document.getElementById('inv-row-'+ch.id);
+  const pctInvEl  = document.getElementById('pct-inv-'+ch.id);
+  const barInvEl  = document.getElementById('bar-inv-'+ch.id);
+  const isInvOn   = eduInvestOnEl && eduInvestOnEl.checked && childInvestEl && childInvestEl.checked;
+  // 専用ファンド対象の子なら fund.totalFV も加算
+  const fundBonus = (fund && fund.targetId === ch.id && fund.totalFV > 0) ? fund.totalFV : 0;
+
+  if((isInvOn || fundBonus > 0) && invRowEl && pctInvEl && barInvEl){
+    const annualRate2 = v('eduInvestReturn') / 100;
+    // calcEduInvest は 月積立+現在貯金+保険+SBI の複利成長を返す
+    const inv2 = isInvOn
+      ? calcEduInvest(ch, eduPerChild || (v('eduMonthly') / CHILDREN.length), annualRate2)
+      : { totalFV: r.savings - r.sibBonus }; // 運用OFFなら元本そのまま
+    // 運用後見込み = 運用後FV + 兄補填 + 専用ファンド
+    const invSavings = Math.round(inv2.totalFV + r.sibBonus + fundBonus);
+    const invPct = r.netCost <= 0 ? 100 : Math.min(100, Math.round(invSavings / r.netCost * 100));
+    invRowEl.style.display = 'block';
+    pctInvEl.textContent = invPct;
+    barInvEl.style.width = invPct + '%';
+  } else if(invRowEl){
+    invRowEl.style.display = 'none';
+  }
+}
+
+// ============================================================
+// YEARLY TABLE
+// ============================================================
+function generateYearlyRows(ch, eduPerChild, sibBonus=0, sibBonusYear=0){
+  const subsidyOn=document.getElementById('subsidyOn').checked;
+  const type=document.getElementById(ch.id+'Type').value;
+  const univCost=getUnivCost(type);
+  const s=SUBSIDY[type]||SUBSIDY.public;
+  const scholAmt=getScholAmt(ch)*48;
+
+  const subsidyByYear=Array.from({length:4},(_,i)=>{
+    if(!subsidyOn||i>=ch.subsidyYears) return 0;
+    return i===0 ? s.admission+s.annual : s.annual;
+  });
+
+  const hsTypeVal  = document.getElementById(ch.id+'HsType')?.value || 'public';
+  const hsJukuOn   = document.getElementById(ch.id+'HsJuku')?.checked ?? true;
+  const hsAnnual   = (HS_COST[hsTypeVal]?.base || 0) + (hsJukuOn ? (HS_COST[hsTypeVal]?.juku || 0) : 0);
+  const hsLabel    = HS_COST[hsTypeVal]?.label || '';
+
+  const withdrawOn2  = document.getElementById('withdrawOn')?.checked ?? false;
+  const withdrawTgt2 = document.getElementById('withdrawTarget')?.value;
+  const withdrawAmt2 = (withdrawOn2 && withdrawTgt2 === ch.id) ? (v('withdrawAmt') || 0) : 0;
+  const withdrawYr2  = withdrawOn2 ? Math.round(v('withdrawYear') || 0) : null;
+
+  const eduInvestOn  = document.getElementById('eduInvestOn')?.checked ?? false;
+  const childInvestOn= document.getElementById(ch.id+'Invest')?.checked ?? false;
+  const fundOnEv     = document.getElementById('fundOn')?.checked ?? false;
+  const fundTargetEv = document.getElementById('fundTarget')?.value;
+  const fundStartYrEv= fundOnEv ? Math.round(v('fundStartYear')) : null;
+  const fundRateEv   = fundOnEv ? v('fundRate') : null;
+  const investRateEv = v('eduInvestReturn');
+
+  let bal=ch.current;
+  const rows=[];
+  const startYr = hsAnnual > 0 ? Math.min(CURRENT_YEAR, ch.univYear - 3) : CURRENT_YEAR;
+  const hsSt = ch.univYear - 3;
+  for(let yr=startYr;yr<=ch.univEndYear;yr++){
+    let add=0,bonus=0,cost=0;
+    const ev=[];
+    if(yr<ch.univYear) add=eduPerChild*12;
+    if(yr===CURRENT_YEAR && eduInvestOn && childInvestOn)
+      ev.push('💹 運用スタート（年率'+investRateEv.toFixed(1)+'%）');
+    if(fundOnEv && fundTargetEv===ch.id && yr===fundStartYrEv)
+      ev.push('💰 専用ファンド開始（年率'+fundRateEv.toFixed(1)+'%）');
+    if(ch.insurance>0&&yr===ch.insYear){ bonus+=ch.insurance; ev.push('🔔 保険 +'+ch.insurance+'万'); }
+    if((ch.sbi||0)>0&&yr===ch.sbiYear){ bonus+=ch.sbi; ev.push('📈 SBI +'+ch.sbi+'万'); }
+    if(sibBonus>0 && yr===sibBonusYear){ bonus+=sibBonus; ev.push('🔀 兄からの補填 +'+sibBonus+'万'); }
+    if(withdrawAmt2 > 0 && yr === withdrawYr2){
+      bonus += withdrawAmt2;
+      ev.push('🏦 老後取り崩し +'+withdrawAmt2+'万');
+    }
+    const hi = yr - hsSt;
+    if(hsAnnual > 0 && hi >= 0 && hi < 3){
+      cost += hsAnnual;
+      const hg=['高1年','高2年','高3年'][hi];
+      ev.push(hi===0?'🏫 高校入学 ('+hg+') '+hsLabel:hi===2?'🏫 高校卒業 ('+hg+')':hg);
+      if(hi===0 && hsTypeVal==='public')  ev.push('就学支援金適用');
+      if(hi===0 && hsTypeVal==='private') ev.push('就学支援金▼12万/年');
+    }
+    const ui=yr-ch.univYear;
+    if(ui>=0&&ui<4){
+      const sub=subsidyByYear[ui]||0;
+      const schol=Math.min(scholAmt/4, univCost);
+      cost+=Math.max(0,univCost-sub-schol);
+      const g=['大1年','大2年','大3年','大4年'][ui];
+      ev.push(ui===0?'🎓 大学入学 ('+g+')':ui===3?'🏅 卒業 ('+g+')':g);
+      if(sub>0) ev.push('補助▼'+sub+'万');
+      if(schol>0) ev.push('奨学金▼'+Math.round(schol)+'万');
+    }
+    bal=bal+add+bonus-cost;
+    const isHS = hsAnnual>0 && hi>=0 && hi<3;
+    rows.push({year:yr,bal:Math.round(bal),add:Math.round(add),bonus:Math.round(bonus),cost:Math.round(cost),ev:ev.join(' ／ '),isUniv:ui>=0&&ui<4,isHS,isEntry:ui===0,isGrad:ui===3,neg:bal<0});
+  }
+
+  // ── 返済スケジュール行 ──
+  const repay = getRepayInfo(ch);
+  if(repay){
+    const annualRepay = Math.round(repay.repayMonthly * 12 * 10) / 10;
+    // ヘッダー区切り行
+    rows.push({ year:null, bal:0, add:0, bonus:0, cost:0, ev:'',
+                isRepayHeader:true, repayInfo:repay });
+    let loanBal = repay.totalLoan;
+    for(let yr=repay.startYear; yr<=repay.endYear; yr++){
+      loanBal = Math.max(0, Math.round((loanBal - annualRepay) * 10) / 10);
+      const isFirst = yr === repay.startYear;
+      const isLast  = yr === repay.endYear;
+      if(isFirst || (yr - repay.startYear) % 5 === 0 || isLast){
+        rows.push({ year:yr, bal:loanBal, add:0, bonus:0, cost:annualRepay,
+                    ev: isLast ? '✅ 返済完了' : `月${repay.repayMonthly}万 返済中`,
+                    isRepay:true, isRepayEnd:isLast,
+                    isUniv:false, isEntry:false, isGrad:false, neg:false });
+      }
+    }
+  }
+
+  return rows;
+}
+
+function updateYearlyTables(eduPerChild){
+  const c=document.getElementById('yearly-tables');
+  if(!c) return;
+  // カスケード: 兄の卒業年と余剰額を引き継ぐ
+  let sibSurplus=0, sibSurplusYear=0;
+  const sibBonusList = CHILDREN.map(ch=>{
+    const b={amt:sibSurplus, year:sibSurplusYear};
+    const r=calcChild(ch, eduPerChild, sibSurplus, sibSurplusYear);
+    sibSurplus = r.surplusForNext;
+    sibSurplusYear = ch.univEndYear;
+    return b;
+  });
+
+  c.innerHTML=CHILDREN.map((ch,i)=>{
+    const sb=sibBonusList[i];
+    let rows=generateYearlyRows(ch,eduPerChild,sb.amt,sb.year);
+    if(ch.id==='b') rows=rows.filter(r=>(!r.isUniv&&!r.isRepay&&!r.isRepayHeader)?(r.year===CURRENT_YEAR||(r.year-CURRENT_YEAR)%3===0||r.year>=ch.univYear-1):true);
+    const tbody=rows.map(r=>{
+      if(r.isRepayHeader){
+        const ri=r.repayInfo;
+        const interestNote = ri.totalInterest>0
+          ? ` ／ 利子総額: <strong style="color:#dc2626;">${ri.totalInterest.toLocaleString()}万円</strong>（元本${ri.totalLoan}万＋利子${ri.totalInterest}万）`
+          : ` ／ 無利子（合計${ri.totalLoan}万）`;
+        return `<tr style="background:#f3e8ff;">
+          <td colspan="6" style="padding:8px 12px;font-size:.72rem;font-weight:800;color:#7c3aed;">
+            📋 奨学金返済スケジュール（${ri.rateLabel}）
+            ／ 返済開始: <strong>${ri.startYear}年</strong>
+            ／ 月返済額: <strong>${ri.repayMonthly}万円</strong>
+            ／ 返済終了: <strong>${ri.endYear}年</strong>
+            ${interestNote}
+          </td>
+        </tr>`;
+      }
+      if(r.isRepay){
+        return `<tr style="background:${r.isRepayEnd?'#ede9fe':'#faf5ff'}">
+          <td style="padding:7px 10px;font-weight:700;white-space:nowrap;">${r.year}年</td>
+          <td style="padding:7px 10px;text-align:right;font-weight:900;font-size:.88rem;color:#7c3aed;">残債 ${r.bal.toLocaleString()}<small style="font-size:.6rem;font-weight:400">万</small></td>
+          <td style="padding:7px 10px;text-align:right;color:var(--muted);font-size:.8rem;">─</td>
+          <td style="padding:7px 10px;text-align:right;color:var(--muted);font-size:.8rem;">─</td>
+          <td style="padding:7px 10px;text-align:right;color:#7c3aed;font-weight:700;font-size:.8rem;">▼${r.cost}万/年</td>
+          <td style="padding:7px 10px;font-size:.7rem;color:${r.isRepayEnd?'#7c3aed;font-weight:800':'var(--muted)'};">${r.ev}</td>
+        </tr>`;
+      }
+      const rowBg = r.neg?'background:#fef2f2':r.isEntry?'background:#dbeafe':r.isGrad?'background:#d1fae5':r.isUniv?'background:#f0fdf4':r.isHS?'background:#fff7ed':'';
+      const balColor = r.neg?'var(--red)':r.isUniv?'var(--green)':r.isHS?'#c2410c':'var(--navy)';
+      return `<tr style="${rowBg}">
+        <td style="padding:7px 10px;font-weight:700;white-space:nowrap;">${r.year}年</td>
+        <td style="padding:7px 10px;text-align:right;font-weight:900;font-size:.92rem;color:${balColor};">${r.bal.toLocaleString()}<small style="font-size:.6rem;font-weight:400">万</small></td>
+        <td style="padding:7px 10px;text-align:right;color:var(--blue);font-size:.8rem;">${r.add>0?'+'+r.add+'万':'─'}</td>
+        <td style="padding:7px 10px;text-align:right;color:#d97706;font-weight:700;font-size:.8rem;">${r.bonus>0?'+'+r.bonus+'万':'─'}</td>
+        <td style="padding:7px 10px;text-align:right;color:var(--red);font-weight:700;font-size:.8rem;">${r.cost>0?'▲'+r.cost+'万':'─'}</td>
+        <td style="padding:7px 10px;font-size:.7rem;color:var(--muted);">${r.ev}</td>
+      </tr>`;
+    }).join('');
+    return `<div style="margin-bottom:24px;">
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid ${ch.color}30;">
+        <span style="font-size:.88rem;font-weight:900;color:${ch.color};">● ${ch.name}（${ch.yomi}）</span>
+        <span style="font-size:.72rem;color:var(--muted);">大学入学: ${ch.univYear}年〜${ch.univEndYear}年卒業</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+          <thead><tr style="background:var(--bg);">
+            <th style="padding:7px 10px;text-align:left;font-weight:600;color:var(--muted);">年度</th>
+            <th style="padding:7px 10px;text-align:right;font-weight:600;color:var(--muted);">残高</th>
+            <th style="padding:7px 10px;text-align:right;font-weight:600;color:var(--blue);">月積立×12</th>
+            <th style="padding:7px 10px;text-align:right;font-weight:600;color:#d97706;">一時金</th>
+            <th style="padding:7px 10px;text-align:right;font-weight:600;color:var(--red);">学費</th>
+            <th style="padding:7px 10px;text-align:left;font-weight:600;color:var(--muted);">イベント</th>
+          </tr></thead>
+          <tbody>${tbody}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('<div style="height:1px;background:var(--border);margin-bottom:24px;"></div>');
+}
+
+// ============================================================
+// RETIRE CHART
+// ============================================================
+function updateRetireChart(monthly, stepUpResult=null){
+  try {
+    const wrap = document.getElementById('retireChartWrap');
+    if(!wrap) return;
+
+    const target = v('retireTarget');
+    // stepUpResult がある場合はそのデータを使う（baseLine は stepUpResult.dataBase）
+    const years = stepUpResult ? stepUpResult.years : Array.from({length:45}, (_,i) => CURRENT_YEAR + i);
+    let baseData;
+    if(stepUpResult){
+      baseData = stepUpResult.dataBase;
+    } else {
+      let pool = RETIRE_CURRENT;
+      baseData = [pool];
+      for(let i = 1; i < years.length; i++){
+        pool = pool * (1 + v('investReturn')/100) + monthly * 12;
+        baseData.push(Math.round(pool));
+      }
+    }
+    const goalData    = years.map(() => target);
+    const achieveIdx  = baseData.findIndex(d => d >= target);
+
+    const ww = wrap.offsetWidth || 600;
+    wrap.innerHTML = '';
+    const canvas = document.createElement('canvas');
+    canvas.id = 'retireChart';
+    canvas.width  = ww;
+    canvas.height = 240;
+    canvas.style.display = 'block';
+    wrap.appendChild(canvas);
+
+    const datasets = [
+      {
+        label: '老後資金（現在のペース）',
+        data: baseData,
+        borderColor: '#10b981',
+        backgroundColor: stepUpResult ? 'rgba(16,185,129,.06)' : 'rgba(16,185,129,.10)',
+        borderWidth: stepUpResult ? 2 : 2.5,
+        borderDash: stepUpResult ? [5,3] : [],
+        fill: true,
+        tension: 0.4,
+        pointRadius: baseData.map((_,i) => i===achieveIdx ? 5 : 0),
+        pointBackgroundColor: '#10b981',
+        pointHoverRadius: 5
+      },
+      {
+        label: '目標 ' + target.toLocaleString() + '万円',
+        data: goalData,
+        borderColor: '#dc2626',
+        borderWidth: 1.5,
+        borderDash: [6, 4],
+        backgroundColor: 'transparent',
+        fill: false,
+        pointRadius: 0,
+        tension: 0
+      }
+    ];
+
+    // 振替シミュレーションラインを追加
+    if(stepUpResult){
+      const stepAchIdx = stepUpResult.dataStepUp.findIndex(d => d >= target);
+      datasets.unshift({
+        label: '🔄 振替後（教育費→老後）',
+        data: stepUpResult.dataStepUp,
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,.10)',
+        borderWidth: 2.5,
+        fill: true,
+        tension: 0.4,
+        pointRadius: stepUpResult.dataStepUp.map((_,i) => i===stepAchIdx ? 7 : 0),
+        pointBackgroundColor: '#f59e0b',
+        pointHoverRadius: 5
+      });
+    }
+
+    new Chart(canvas, {
+      type: 'line',
+      data: { labels: years.map(y => y + '年'), datasets },
+      options: {
+        responsive: false,
+        animation: { duration: 500 },
+        plugins: {
+          legend: { position: 'top', labels: { font: {size:10}, boxWidth:12, padding:12 } },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                if(ctx.parsed.y === null) return null;
+                return ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString() + '万円';
+              }
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { maxTicksLimit: 10, font: {size:9} }, grid: { display: false } },
+          y: {
+            ticks: { callback: val => val.toLocaleString() + '万', font: {size:9}, maxTicksLimit: 6 },
+            grid: { color: 'rgba(0,0,0,.04)' },
+            suggestedMin: 0
+          }
+        }
+      }
+    });
+  } catch(e) {
+    console.error('老後チャートエラー:', e);
+  }
+}
+
+// ============================================================
+// 教育資金 投資運用チャート
+// ============================================================
+function updateEduInvestChart(eduPerChild) {
+  const card = document.getElementById('edu-invest-chart-card');
+  const eduInvestOn = document.getElementById('eduInvestOn').checked;
+  const fundOnNow   = document.getElementById('fundOn')?.checked ?? false;
+  if(!card) return;
+  // 教育投資OR専用ファンドのどちらかONなら表示
+  card.style.display = (eduInvestOn || fundOnNow) ? 'block' : 'none';
+  if(!eduInvestOn && !fundOnNow) return;
+
+  try {
+    const annualRate = v('eduInvestReturn') / 100;
+    const wrap = document.getElementById('eduInvestChartWrap');
+    if(!wrap) return;
+
+    // 最長期間（最後の子の大学卒業年まで）
+    const lastEndYear = Math.max(...CHILDREN.map(ch => ch.univEndYear));
+    const years = [];
+    for(let yr = CURRENT_YEAR; yr <= lastEndYear; yr++) years.push(yr);
+
+    // 各子ども、運用あり/なし の総残高推移を合算
+    // totalWith    = 投資ONの子のみ（運用レート適用）
+    // totalWithout = 投資ONの子のみ（貯金ベース、比較用）
+    // totalSaving  = 投資OFFの子（貯金のみ）
+    const totalWith    = new Array(years.length).fill(0);
+    const totalWithout = new Array(years.length).fill(0);
+    const totalSaving  = new Array(years.length).fill(0);
+    let anyInvestOn = false;
+
+    CHILDREN.forEach(ch => {
+      const childInvestOn = document.getElementById(ch.id+'Invest')?.checked ?? false;
+      if(childInvestOn) anyInvestOn = true;
+
+      const r = childInvestOn ? annualRate / 12 : 0;
+      let balWith    = ch.current; // 運用あり残高（投資ONのみ計算）
+      let balWithout = ch.current; // 貯金のみ残高（全子）
+
+      years.forEach((yr, idx) => {
+        // 保険・SBIのキャッシュイン
+        let bonus = 0;
+        if(ch.insurance > 0 && yr === ch.insYear) bonus += ch.insurance;
+        if((ch.sbi||0) > 0 && yr === ch.sbiYear) bonus += ch.sbi;
+
+        // 大学前：月積立
+        if(yr < ch.univYear) {
+          if(childInvestOn && r > 0) {
+            balWith = balWith * Math.pow(1 + r, 12) + eduPerChild * (Math.pow(1 + r, 12) - 1) / r;
+          } else {
+            balWith += eduPerChild * 12;
+          }
+          balWithout += eduPerChild * 12;
+        }
+
+        // ボーナス加算
+        if(childInvestOn && r > 0 && bonus > 0 && yr < ch.univYear) {
+          balWith += bonus * (1 + r * 6); // 年中受取想定
+        } else {
+          balWith += bonus;
+        }
+        balWithout += bonus;
+
+        // 大学在学中：学費差引
+        const ui = yr - ch.univYear;
+        if(ui >= 0 && ui < 4) {
+          const type = document.getElementById(ch.id + 'Type').value;
+          const univCost = getUnivCost(type);
+          const subsidyOn = document.getElementById('subsidyOn').checked;
+          const s = SUBSIDY[type] || SUBSIDY.public;
+          const sub = (subsidyOn && ui < ch.subsidyYears) ? (ui === 0 ? s.admission + s.annual : s.annual) : 0;
+          const schol = getScholAmt(ch);
+          const cost = Math.max(0, univCost - sub - schol);
+          balWith    -= cost;
+          balWithout -= cost;
+        }
+
+        const vWith    = Math.max(0, Math.round(balWith));
+        const vWithout = Math.max(0, Math.round(balWithout));
+
+        if(childInvestOn) {
+          // 投資ONの子のみ「運用あり」「貯金比較」ラインに加算
+          totalWith[idx]    += vWith;
+          totalWithout[idx] += vWithout;
+        } else {
+          // 投資OFFの子は「貯金のみ」ラインに加算
+          totalSaving[idx]  += vWithout;
+        }
+      });
+    });
+
+    // Canvas再作成
+    const ww = wrap.offsetWidth || 600;
+    wrap.innerHTML = '';
+    const canvas = document.createElement('canvas');
+    canvas.width  = ww;
+    canvas.height = 240;
+    canvas.style.display = 'block';
+    wrap.appendChild(canvas);
+
+    // 専用ファンドのデータセット（対象の子どもの入学年まで）
+    const fundData = calcEduFund();
+    const datasets = [];
+
+    // 運用ありライン（投資ONの子のみ）
+    if(anyInvestOn){
+      datasets.push({
+        label: `積立運用あり（年率${(annualRate*100).toFixed(1)}%）※運用ON分のみ`,
+        data: totalWith,
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16,185,129,.12)',
+        borderWidth: 2.5,
+        fill: true,
+        tension: 0.35,
+        pointRadius: 0,
+        pointHoverRadius: 5
+      });
+      // 運用ONの子の貯金比較ライン
+      datasets.push({
+        label: '同じ子を貯金した場合（比較）',
+        data: totalWithout,
+        borderColor: '#10b981',
+        backgroundColor: 'transparent',
+        borderWidth: 1.5,
+        borderDash: [6, 4],
+        fill: false,
+        tension: 0.35,
+        pointRadius: 0,
+        pointHoverRadius: 5
+      });
+    }
+
+    // 貯金のみライン（投資OFFの子）— ONの子が1人でもいる場合だけ追加
+    const hasSavingsOnly = CHILDREN.some(ch => !(document.getElementById(ch.id+'Invest')?.checked ?? false));
+    if(anyInvestOn && hasSavingsOnly){
+      datasets.push({
+        label: '貯金のみ（運用OFF分）',
+        data: totalSaving,
+        borderColor: '#94a3b8',
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        borderDash: [3, 3],
+        fill: false,
+        tension: 0.35,
+        pointRadius: 0,
+        pointHoverRadius: 5
+      });
+    } else if(!anyInvestOn){
+      // 全員貯金のみの場合は1本だけ
+      const totalAll = totalSaving;
+      datasets.push({
+        label: '貯金のみ（全員）',
+        data: totalAll,
+        borderColor: '#94a3b8',
+        backgroundColor: 'rgba(148,163,184,.10)',
+        borderWidth: 2,
+        borderDash: [6, 4],
+        fill: true,
+        tension: 0.35,
+        pointRadius: 0,
+        pointHoverRadius: 5
+      });
+    }
+    if(fundData && fundData.holdYears > 0){
+      // 専用ファンドの年別残高を生成
+      const fundR  = fundData.annualRate / 12;
+      const fundYearData = years.map((yr, idx) => {
+        const elapsed = yr - fundData.startYear;
+        if(elapsed < 0) return null;
+        if(yr > fundData.ch.univYear) return null;
+        const n = elapsed * 12;
+        const initFV = Math.round(fundData.initial * Math.pow(1 + fundData.annualRate, elapsed));
+        let mFV = 0;
+        if(fundR > 0 && n > 0){
+          mFV = Math.round(fundData.monthly * (Math.pow(1+fundR,n)-1)/fundR);
+        } else {
+          mFV = Math.round(fundData.monthly * n);
+        }
+        return initFV + mFV;
+      });
+      datasets.push({
+        label: `💰 ${fundData.ch.name}専用ファンド（${(fundData.annualRate*100).toFixed(1)}%）`,
+        data: fundYearData,
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,.10)',
+        borderWidth: 2.5,
+        borderDash: [4, 2],
+        fill: false,
+        tension: 0.35,
+        pointRadius: fundYearData.map((d,i) => years[i]===fundData.ch.univYear ? 7 : 0),
+        pointBackgroundColor: '#f59e0b',
+        pointHoverRadius: 5
+      });
+    }
+
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: years.map(y => y + '年'),
+        datasets
+      },
+      options: {
+        responsive: false,
+        animation: { duration: 500 },
+        plugins: {
+          legend: { position: 'top', labels: { font: {size:10}, boxWidth:12, padding:12 } },
+          tooltip: {
+            callbacks: {
+              label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString() + '万円'
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { maxTicksLimit: 10, font: {size:9} }, grid: { display: false } },
+          y: {
+            ticks: { callback: val => val.toLocaleString() + '万', font: {size:9}, maxTicksLimit: 6 },
+            grid: { color: 'rgba(0,0,0,.04)' },
+            suggestedMin: 0
+          }
+        }
+      }
+    });
+
+    // 運用効果サマリーテーブル（専用ファンド分も加算）
+    const tableEl = document.getElementById('edu-invest-effect-table');
+    if(tableEl) {
+      // 子ごとの集計（投資ON分 + 専用ファンド分を合算）
+      const childStats = CHILDREN.map(ch => {
+        const childInvestOn  = document.getElementById(ch.id+'Invest')?.checked ?? false;
+        const effectiveRate  = childInvestOn ? annualRate : 0;
+        const inv            = calcEduInvest(ch, eduPerChild, effectiveRate);
+        const isFundTarget   = fundData && fundData.targetId === ch.id;
+
+        // 専用ファンド分（元本・FV・効果）
+        const fBase = isFundTarget ? fundData.totalBase : 0;
+        const fFV   = isFundTarget ? fundData.totalFV   : 0;
+        const fGain = isFundTarget ? fundData.gain      : 0;
+
+        const combinedBase = inv.totalBase + fBase;
+        const combinedFV   = inv.totalFV   + fFV;
+        const combinedGain = inv.investGain + fGain;
+        const hasEffect    = childInvestOn || isFundTarget;
+
+        // ステータスラベル
+        const labels = [];
+        if(childInvestOn) labels.push(`<span style="color:#10b981;font-size:.65rem;">💹 運用中</span>`);
+        if(isFundTarget)  labels.push(`<span style="color:#0f766e;font-size:.65rem;">💰 専用ファンド</span>`);
+        if(!hasEffect)    labels.push(`<span style="color:#94a3b8;font-size:.65rem;">貯金のみ</span>`);
+        const statusLabel = labels.join(' ');
+
+        const gainDisplay = combinedGain > 0
+          ? `<td style="padding:5px 10px;text-align:right;color:#059669;font-weight:900;">+${combinedGain.toLocaleString()}万円</td>`
+          : `<td style="padding:5px 10px;text-align:right;color:#94a3b8;">─</td>`;
+        const fvDisplay = hasEffect
+          ? `<td style="padding:5px 10px;text-align:right;color:#10b981;font-weight:700;">${combinedFV.toLocaleString()}万円</td>`
+          : `<td style="padding:5px 10px;text-align:right;color:#94a3b8;">${combinedBase.toLocaleString()}万円</td>`;
+
+        return { ch, statusLabel, combinedBase, combinedFV, combinedGain, fvDisplay, gainDisplay };
+      });
+
+      const rows = childStats.map(({ ch, statusLabel, combinedBase, fvDisplay, gainDisplay }) => `<tr>
+        <td style="padding:5px 10px;font-weight:800;color:${ch.color};">${ch.name} ${statusLabel}</td>
+        <td style="padding:5px 10px;text-align:right;">${combinedBase.toLocaleString()}万円</td>
+        ${fvDisplay}
+        ${gainDisplay}
+      </tr>`).join('');
+
+      const total = childStats.reduce((acc, s) => ({
+        base: acc.base + s.combinedBase,
+        fv:   acc.fv   + s.combinedFV,
+        gain: acc.gain + s.combinedGain
+      }), {base:0, fv:0, gain:0});
+
+      tableEl.innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-size:.75rem;">
+          <thead>
+            <tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0;">
+              <th style="padding:6px 10px;text-align:left;color:var(--muted);">お子さん</th>
+              <th style="padding:6px 10px;text-align:right;color:var(--muted);">元本合計</th>
+              <th style="padding:6px 10px;text-align:right;color:#10b981;">運用後</th>
+              <th style="padding:6px 10px;text-align:right;color:#059669;">運用効果</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+          <tfoot>
+            <tr style="border-top:2px solid #e2e8f0;background:#f0fdf4;">
+              <td style="padding:6px 10px;font-weight:900;">合計</td>
+              <td style="padding:6px 10px;text-align:right;font-weight:700;">${total.base.toLocaleString()}万円</td>
+              <td style="padding:6px 10px;text-align:right;font-weight:700;color:#10b981;">${total.fv.toLocaleString()}万円</td>
+              <td style="padding:6px 10px;text-align:right;font-weight:900;color:#059669;font-size:.85rem;">+${total.gain.toLocaleString()}万円</td>
+            </tr>
+          </tfoot>
+        </table>`;
+    }
+  } catch(e) {
+    console.error('教育投資チャートエラー:', e);
+  }
+}
+
+// ============================================================
+// 子ども別 教育資金積立チャート
+// ============================================================
+function updatePerChildChart(eduPerChild) {
+  const card = document.getElementById('per-child-chart-card');
+  const wrap = document.getElementById('perChildChartWrap');
+  if(!card || !wrap) return;
+
+  const eduInvestOn = document.getElementById('eduInvestOn').checked;
+  const fundOnNow   = document.getElementById('fundOn')?.checked ?? false;
+  card.style.display = (eduInvestOn || fundOnNow) ? 'block' : 'none';
+  if(!eduInvestOn && !fundOnNow) return;
+
+  try {
+    const annualRate = v('eduInvestReturn') / 100;
+    const lastEndYear = Math.max(...CHILDREN.map(ch => ch.univEndYear));
+    const years = [];
+    for(let yr = CURRENT_YEAR; yr <= lastEndYear; yr++) years.push(yr);
+
+    const datasets = [];
+
+    CHILDREN.forEach(ch => {
+      const childInvestOn = document.getElementById(ch.id+'Invest')?.checked ?? false;
+      const r = childInvestOn ? annualRate / 12 : 0;
+
+      // 運用あり ライン
+      const dataWith    = [];
+      const dataWithout = [];
+      let balWith    = ch.current;
+      let balWithout = ch.current;
+
+      years.forEach(yr => {
+        // 保険・SBI キャッシュイン
+        let bonus = 0;
+        if(ch.insurance > 0 && yr === ch.insYear) bonus += ch.insurance;
+        if((ch.sbi||0) > 0 && yr === ch.sbiYear)  bonus += ch.sbi;
+
+        // 大学前：月積立
+        if(yr < ch.univYear) {
+          if(r > 0) {
+            balWith = balWith * Math.pow(1+r, 12) + eduPerChild * (Math.pow(1+r, 12) - 1) / r;
+          } else {
+            balWith += eduPerChild * 12;
+          }
+          balWithout += eduPerChild * 12;
+          if(bonus > 0){
+            balWith    += r > 0 ? bonus * (1 + r * 6) : bonus;
+            balWithout += bonus;
+          }
+        }
+
+        // 大学在学中：学費差引
+        const ui = yr - ch.univYear;
+        if(ui >= 0 && ui < 4){
+          const type = document.getElementById(ch.id+'Type').value;
+          const univCost = getUnivCost(type);
+          const subsidyOn = document.getElementById('subsidyOn').checked;
+          const s = SUBSIDY[type] || SUBSIDY.public;
+          const sub = (subsidyOn && ui < ch.subsidyYears) ? (ui===0 ? s.admission+s.annual : s.annual) : 0;
+          const schol = getScholAmt(ch);
+          const cost = Math.max(0, univCost - sub - schol);
+          balWith    -= cost;
+          balWithout -= cost;
+        }
+
+        // 大学卒業後は表示しない（null）
+        if(yr > ch.univEndYear){
+          dataWith.push(null);
+          dataWithout.push(null);
+        } else {
+          dataWith.push(Math.max(0, Math.round(balWith)));
+          dataWithout.push(Math.max(0, Math.round(balWithout)));
+        }
+      });
+
+      // 運用あり ライン（子どもの色、実線）
+      const investLabel = childInvestOn
+        ? `${ch.name}（運用あり ${(annualRate*100).toFixed(1)}%）`
+        : `${ch.name}（貯金のみ）`;
+      datasets.push({
+        label: investLabel,
+        data: dataWith,
+        borderColor: ch.color,
+        backgroundColor: ch.color + '18',
+        borderWidth: childInvestOn ? 2.5 : 2,
+        borderDash: [],
+        fill: false,
+        tension: 0.35,
+        pointRadius: years.map(yr => yr === ch.univYear ? 6 : 0),
+        pointBackgroundColor: ch.color,
+        pointHoverRadius: 5,
+        spanGaps: false
+      });
+
+      // 運用なし比較ライン（子どもの色、破線）— 運用ONの子のみ
+      if(childInvestOn){
+        datasets.push({
+          label: `${ch.name}（貯金のみ）`,
+          data: dataWithout,
+          borderColor: ch.color,
+          backgroundColor: 'transparent',
+          borderWidth: 1.5,
+          borderDash: [5, 4],
+          fill: false,
+          tension: 0.35,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          spanGaps: false
+        });
+      }
+    });
+
+    // Canvas再作成
+    const ww = wrap.offsetWidth || 600;
+    wrap.innerHTML = '';
+    const canvas = document.createElement('canvas');
+    canvas.width  = ww;
+    canvas.height = 250;
+    canvas.style.display = 'block';
+    wrap.appendChild(canvas);
+
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: years.map(y => y + '年'),
+        datasets
+      },
+      options: {
+        responsive: false,
+        animation: { duration: 500 },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              font: { size: 10 }, boxWidth: 12, padding: 10,
+              filter: item => !item.text.includes('貯金のみ') || datasets.some(d => d.label === item.text && d.borderDash.length > 0)
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                if(ctx.parsed.y === null) return null;
+                return ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString() + '万円';
+              }
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { maxTicksLimit: 12, font: { size: 9 } }, grid: { display: false } },
+          y: {
+            ticks: { callback: val => val.toLocaleString() + '万', font: { size: 9 }, maxTicksLimit: 6 },
+            grid: { color: 'rgba(0,0,0,.04)' },
+            suggestedMin: 0
+          }
+        }
+      }
+    });
+
+  } catch(e) {
+    console.error('子ども別チャートエラー:', e);
+  }
+}
+
+// ============================================================
+// SETTINGS MODAL
+// ============================================================
+function openCfg(){
+  document.getElementById('cfg-baseyear').value = CONFIG.baseYear;
+  document.getElementById('cfg-retire').value   = CONFIG.retireCurrent;
+  document.getElementById('cfg-numch').value     = CONFIG.numChildren;
+  renderCfgChildren();
+  document.getElementById('cfg-modal').style.display='flex';
+}
+function closeCfg(){ document.getElementById('cfg-modal').style.display='none'; }
+
+function renderCfgChildren(){
+  const IS = 'width:100%;border:1.5px solid '; }
+
+function renderCfgChildren(){
+  const IS = 'width:100%;border:1.5px solid #e2e8f0;border-radius:7px;padding:6px 9px;font-size:.88rem;font-weight:700;color:#1a2b4a;box-sizing:border-box;margin-top:3px;';
+  const LB = 'font-size:.67rem;color:#64748b;font-weight:600;display:block;margin-top:7px;';
+  const _numCh = parseInt((document.getElementById('cfg-numch')||{}).value) || CONFIG.numChildren;
+  document.getElementById('cfg-children-area').innerHTML = CONFIG.children.slice(0, _numCh).map((ch,i)=>{
+    const col=CHILD_COLORS[i];
+    return `<div style="border:2px solid ${col}35;border-radius:12px;padding:16px 18px;background:${col}07;margin-bottom:12px;">
+      <div style="font-size:.76rem;font-weight:900;color:${col};margin-bottom:8px;">子ども ${i+1}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;">
+        <div><label style="${LB}">名前（漢字）</label><input type="text" id="ci-name-${i}" value="${ch.name}" style="${IS}"></div>
+        <div><label style="${LB}">よみがな</label><input type="text" id="ci-yomi-${i}" value="${ch.yomi}" style="${IS}"></div>
+        <div><label style="${LB}">大学入学年</label><input type="number" id="ci-univ-${i}" value="${ch.univYear}" style="${IS}"></div>
+        <div><label style="${LB}">現在の教育貯金（万円）</label><input type="number" id="ci-cur-${i}" value="${ch.current}" style="${IS}"></div>
+        <div><label style="${LB}">保険解約金（万円・0=なし）</label><input type="number" id="ci-ins-${i}" value="${ch.insurance}" style="${IS}"></div>
+        <div><label style="${LB}">保険 入金年（0=なし）</label><input type="number" id="ci-insy-${i}" value="${ch.insYear}" style="${IS}"></div>
+        <div><label style="${LB}">投資取崩（万円・0=なし）</label><input type="number" id="ci-sbi-${i}" value="${ch.sbi}" style="${IS}"></div>
+        <div><label style="${LB}">投資取崩 入金年（0=なし）</label><input type="number" id="ci-sbiy-${i}" value="${ch.sbiYear}" style="${IS}"></div>
+        <div style="grid-column:span 2;"><label style="${LB}">多子補助 対象年数（授業料無償化が適用される年数: 0〜4年）</label>
+          <select id="ci-sub-${i}" style="${IS};background:#fff;">${[0,1,2,3,4].map(n=>`<option value="${n}"${ch.subsidyYears===n?' selected':''}>${n}年</option>`).join('')}</select></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function saveCfg(){
+  CONFIG.baseYear      = parseInt(document.getElementById('cfg-baseyear').value)||new Date().getFullYear();
+  CONFIG.retireCurrent = parseFloat(document.getElementById('cfg-retire').value)||0;
+  CONFIG.numChildren   = parseInt(document.getElementById('cfg-numch').value)||4;
+  CONFIG.children = CONFIG.children.map((ch,i)=>({
+    ...ch,
+    name:        (document.getElementById('ci-name-'+i)||{}).value||ch.name,
+    yomi:        (document.getElementById('ci-yomi-'+i)||{}).value||ch.yomi,
+    univYear:    parseInt((document.getElementById('ci-univ-'+i)||{}).value)||ch.univYear,
+    current:     parseFloat((document.getElementById('ci-cur-'+i)||{}).value)||0,
+    insurance:   parseFloat((document.getElementById('ci-ins-'+i)||{}).value)||0,
+    insYear:     parseInt((document.getElementById('ci-insy-'+i)||{}).value)||0,
+    sbi:         parseFloat((document.getElementById('ci-sbi-'+i)||{}).value)||0,
+    sbiYear:     parseInt((document.getElementById('ci-sbiy-'+i)||{}).value)||0,
+    subsidyYears:parseInt((document.getElementById('ci-sub-'+i)||{}).value)||0,
+  }));
+  buildState();
+  closeCfg();
+  recalc();
+}
+
+// ============================================================
+// LOCAL STORAGE AUTO-SAVE
+// ============================================================
+const STORAGE_KEY = 'lifePlanSim_public_v1';
+
+const SAVE_NUMBER_IDS = [
+  'eduMonthly','retireMonthly','univCostPublic','univCostPrivate','investReturn',
+  'retireTarget','scholRate','sSchol','kSchol','aSchol','bSchol',
+  'fundStartYear','fundInitial','fundMonthly','fundRate','eduInvestReturn'
+];
+const SAVE_CHECKBOX_IDS = [
+  'scholOn','subsidyOn','eduInvestOn','sInvest','kInvest','aInvest','bInvest','fundOn','stepUpOn'
+];
+const SAVE_SELECT_IDS = [
+  'scholType','fundTarget','sType','kType','aType','bType'
+];
+
+function saveToStorage(){
+  try {
+    const data = { config: JSON.parse(JSON.stringify(CONFIG)), inputs: {}, checks: {}, selects: {} };
+    SAVE_NUMBER_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if(el) data.inputs[id] = el.value;
+    });
+    SAVE_CHECKBOX_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if(el) data.checks[id] = el.checked;
+    });
+    SAVE_SELECT_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if(el) data.selects[id] = el.value;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch(e){ console.warn('保存エラー:', e); }
+}
+
+function loadFromStorage(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    if(data.config){
+      CONFIG.baseYear      = data.config.baseYear      || CONFIG.baseYear;
+      CONFIG.retireCurrent = data.config.retireCurrent ?? CONFIG.retireCurrent;
+      CONFIG.numChildren   = data.config.numChildren   || CONFIG.numChildren;
+      if(Array.isArray(data.config.children)){
+        data.config.children.forEach((saved, i) => {
+          if(CONFIG.children[i]) CONFIG.children[i] = { ...CONFIG.children[i], ...saved };
+        });
+      }
+      buildState();
+    }
+    if(data.inputs){
+      SAVE_NUMBER_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if(el && data.inputs[id] !== undefined) el.value = data.inputs[id];
+      });
+    }
+    if(data.checks){
+      SAVE_CHECKBOX_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if(el && data.checks[id] !== undefined) el.checked = data.checks[id];
+      });
+    }
+    if(data.selects){
+      SAVE_SELECT_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if(el && data.selects[id] !== undefined) el.value = data.selects[id];
+      });
+    }
+  } catch(e){ console.warn('読込エラー:', e); }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function waitAndInit(){
+  if(typeof Chart === 'undefined'){ setTimeout(waitAndInit, 100); return; }
+  loadFromStorage();
+  recalc();
+}
+window.addEventListener('DOMContentLoaded', () => setTimeout(waitAndInit, 50));
+</script>
+
+<!-- ===== 前提条件設定モーダル ===== -->
+<div id="cfg-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;">
+  <div style="width:100%;max-width:640px;background:#fff;border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,.35);margin:0 auto;display:flex;flex-direction:column;max-height:calc(100vh - 48px);">
+
+    <!-- ヘッダー（常に表示） -->
+    <div style="flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:20px 30px 14px;border-bottom:2px solid #e2e8f0;border-radius:18px 18px 0 0;background:#fff;">
+      <div>
+        <div style="font-size:1.05rem;font-weight:900;color:#1a2b4a;">⚙️ 前提条件の設定</div>
+        <div style="font-size:.7rem;color:#64748b;margin-top:3px;">名前・入学年・現在貯金など初期値を自由に変更できます</div>
+      </div>
+      <button onclick="closeCfg()" style="width:34px;height:34px;border-radius:50%;border:1.5px solid #e2e8f0;background:#f8fafc;cursor:pointer;font-size:1rem;color:#64748b;font-weight:700;">✕</button>
+    </div>
+
+    <!-- スクロール可能なコンテンツ -->
+    <div style="flex:1;overflow-y:auto;padding:20px 30px 28px;">
+
+    <div style="background:#f0fdf4;border-radius:12px;padding:16px 20px;margin-bottom:20px;">
+      <div style="font-size:.75rem;font-weight:800;color:#166534;margin-bottom:12px;">🌙 基本設定</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px;">
+        <div>
+          <label style="font-size:.68rem;color:#374151;font-weight:600;display:block;">基準年度</label>
+          <input type="number" id="cfg-baseyear" style="width:100%;border:1.5px solid #bbf7d0;border-radius:7px;padding:7px 9px;font-size:.9rem;font-weight:700;color:#1a2b4a;margin-top:3px;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="font-size:.68rem;color:#374151;font-weight:600;display:block;">老後資金 現在残高（万円）</label>
+          <input type="number" id="cfg-retire" style="width:100%;border:1.5px solid #bbf7d0;border-radius:7px;padding:7px 9px;font-size:.9rem;font-weight:700;color:#1a2b4a;margin-top:3px;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="font-size:.68rem;color:#374151;font-weight:600;display:block;">子どもの人数</label>
+          <select id="cfg-numch" onchange="renderCfgChildren()" style="width:100%;border:1.5px solid #bbf7d0;border-radius:7px;padding:7px 9px;font-size:.9rem;font-weight:700;color:#1a2b4a;margin-top:3px;box-sizing:border-box;background:#fff;">
+            <option value="1">1人</option>
+            <option value="2">2人</option>
+            <option value="3">3人</option>
+            <option value="4">4人</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:.75rem;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #e2e8f0;">👨‍👩‍👧‍👦 子ども別設定</div>
+    <div id="cfg-children-area"></div>
+
+    <div style="display:flex;gap:10px;margin-top:24px;">
+      <button onclick="closeCfg()" style="flex:1;padding:11px;border:1.5px solid #e2e8f0;background:#f1f5f9;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:700;color:#64748b;">キャンセル</button>
+      <button onclick="saveCfg()" style="flex:2;padding:11px;border:none;background:linear-gradient(135deg,#1a2b4a,#2d3f63);color:#fff;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:800;">✅ 保存して再計算</button>
+    </div>
+
+    </div><!-- /scroll-content -->
+  </div>
+</div>
+
+</body>
+</html>
